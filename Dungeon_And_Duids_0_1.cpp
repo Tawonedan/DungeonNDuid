@@ -60,11 +60,14 @@ int main() {
 
 void titleScreen() {
     int choice;
-    cout << "=== Dungeon and Duid ===\n";
-    cout << "1. Load Game\n";
-    cout << "2. New Game\n";
-    cout << "3. Exit\n";
-    cout << "Pilih : ";
+    cout << "==================================================\n";
+    cout << "|                 Dungeon n Duid                 |\n";
+    cout << "==================================================\n";
+    cout << "| 1. Load game                                   |\n";
+    cout << "| 2. New Game                                    |\n";
+    cout << "| 3. Keluar                                      |\n";
+    cout << "==================================================\n";
+    cout << "Pilih: ";
     cin >> choice;
 
     switch (choice) {
@@ -138,9 +141,20 @@ void exitGame() {
 }
 
 void prologue() {
-    cout << "Welcome to the world of Duid, where adventurers seek fortune and fame.\n";
-    cout << "You are a novice adventurer seeking to make a name for yourself.\n";
-    cout << "Your journey begins at the Adventurers' Guild, where your choices shape your destiny.\n";
+    cout << "==================================================\n";
+    cout << "|                    Prologue                   |\n";
+    cout << "==================================================\n";
+    cout << "| Di dunia Duid, sebuah tanah penuh reruntuhan   |\n";
+    cout << "| kuno dan ruang bawah tanah mematikan, kisah    |\n";
+    cout << "| tentang kekayaan dan bahaya bergema di seluruh |\n";
+    cout << "| guild.                                         |\n";
+    cout << "|                                                |\n";
+    cout << "| Sebagai seorang petualang pemula, Anda tiba di |\n";
+    cout << "| Adventurers' Guild dengan semangat membara.    |\n";
+    cout << "| Hari ini, perjalanan Anda dimulai. Apakah Anda |\n";
+    cout << "| akan mencapai kejayaan, atau menjadi jiwa yang |\n";
+    cout << "| terlupakan di kegelapan?                       |\n";
+    cout << "==================================================\n";
 }
 
 void inputName() {
@@ -155,11 +169,14 @@ void idleGuild() {
 
 void guild() {
     int choice;
-    cout << "=== Guild ===\n";
-    cout << "1. Receptionist (Pilih Dungeon)\n";
-    cout << "2. Busy Merchant (Sell inventory)\n";
-    cout << "3. Rest (Save game)\n";
-    cout << "4. Exit ke Menu Utama\n";
+    cout << "==================================================\n";
+    cout << "|                    Guild Menu                 |\n";
+    cout << "==================================================\n";
+    cout << "| 1. Resepsionis (Pilih dungeon)                |\n";
+    cout << "| 2. Pedagang Sibuk (Jual inventaris)           |\n";
+    cout << "| 3. Istirahat (Simpan permainan)               |\n";
+    cout << "| 4. Kembali ke menu utama                      |\n";
+    cout << "==================================================\n";
     cout << "Pilih: ";
     cin >> choice;
 
@@ -236,11 +253,14 @@ void sellItems() {
 
 void selectDungeon() {
     int choice;
-    cout << "=== Select Dungeon ===\n";
-    cout << "1. Skibidi Castle\n";
-    cout << "2. El Macho Prison\n";
-    cout << "3. Sigma Temple Ruin\n";
-    cout << "Pilih : ";
+    cout << "==================================================\n";
+    cout << "|               Pilih Dungeon                  |\n";
+    cout << "==================================================\n";
+    cout << "| 1. Skibidi Castle                             |\n";
+    cout << "| 2. El Macho Prison                            |\n";
+    cout << "| 3. Sigma Temple Ruin                          |\n";
+    cout << "==================================================\n";
+    cout << "Pilih: ";
     cin >> choice;
 
     switch (choice) {
@@ -276,12 +296,15 @@ void sigmaTempleRuin() {
 
 void camp() {
     int choice;
-    cout << "=== Camp ===\n";
-    cout << "1. Bonfire (Save game)\n";
-    cout << "2. Interact with fellow adventurer\n";
-    cout << "3. Enter dungeon\n";
-    cout << "4. Travelling Merchant (Buy weapons)\n";
-    cout << "5. Return to Guild\n";
+    cout << "==================================================\n";
+    cout << "|                  Perkemahan                   |\n";
+    cout << "==================================================\n";
+    cout << "| 1. Bonfire    (Simpan permainan)              |\n";
+    cout << "| 2. Interaksi Fellow Adventurer                |\n";
+    cout << "| 3. Masuk ke dungeon                           |\n";
+    cout << "| 4. Travelling Merchant (Beli senjata)         |\n";
+    cout << "| 5. Kembali ke Guild                           |\n";
+    cout << "==================================================\n";
     cout << "Pilih: ";
     cin >> choice;
 
