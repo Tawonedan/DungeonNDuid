@@ -2,30 +2,37 @@
 #include <fstream>
 #include <string>
 #include <ctime>
+#include <sstream>
 using namespace std;
 
 // Global variables
 string playerName;
 int playerHealth = 100;
 int gold = 50;
+string chosenWeapon = "";
 
-// Structs for inventory and merchant items
+// Structs for inventory and weapons
 struct InventoryItem {
     string name;
     int price;
 };
 
-struct Item {
+struct Weapon {
     string name;
-    int price;
+    int damage;
 };
 
 // Replace vector with arrays
 const int MAX_INVENTORY_SIZE = 100;
+const int MAX_WEAPONS_SIZE = 50;
 const int MAX_MERCHANT_ITEMS = 10;
 InventoryItem playerInventory[MAX_INVENTORY_SIZE];
+Weapon weaponList[MAX_WEAPONS_SIZE];
 int playerInventorySize = 3; // Initial inventory size
-Item merchantItems[MAX_MERCHANT_ITEMS] = { {"Long Sword", 50}, {"Shield", 30}, {"Potion", 10} };
+int weaponListSize = 0;      // Initial weapon list size
+
+// Merchant items
+InventoryItem merchantItems[MAX_MERCHANT_ITEMS] = { {"Long Sword", 50}, {"Shield", 30}, {"Potion", 10} };
 int merchantItemsSize = 3;
 
 // Initialize player inventory
@@ -39,13 +46,11 @@ void assignDefaultPricesToInventory() {
     for (int i = 0; i < playerInventorySize; ++i) {
         if (playerInventory[i].name == "Antique Hourglass") playerInventory[i].price = 20;
         else if (playerInventory[i].name == "Old Coin") playerInventory[i].price = 15;
-        else if (playerInventory[i].name == "Long Sword") playerInventory[i].price = 50;
         else if (playerInventory[i].name == "Shield") playerInventory[i].price = 30;
         else if (playerInventory[i].name == "Potion") playerInventory[i].price = 10;
     }
 }
 
-// Function declarations
 void titleScreen();
 void loadGame();
 void newGame();
@@ -67,15 +72,67 @@ void interactFellowAdventurer();
 void enterDungeon();
 void travellingMerchant();
 void sellItems();
-void dungeon();
-void goDeeper();
-void checkAround();
+void checkInventory();
+
+// Load and save weapons to file
+void loadWeapons() {
+    ifstream file("weapons.txt");
+    if (!file.is_open()) return;
+
+    weaponListSize = 0;
+    string line;
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string name, damageStr;
+        getline(ss, name, ',');
+        getline(ss, damageStr);
+
+        // Replace underscores with spaces
+        for (char &c : name) {
+            if (c == '_') c = ' ';
+        }
+
+        if (name == "ChosenWeapon") {
+            chosenWeapon = damageStr;
+        } else {
+            weaponList[weaponListSize++] = {name, stoi(damageStr)};
+        }
+    }
+    file.close();
+}
+
+void saveWeapons() {
+    ofstream file("weapons.txt");
+    for (int i = 0; i < weaponListSize; ++i) {
+        string name = weaponList[i].name;
+
+        // Replace spaces with underscores
+        for (char &c : name) {
+            if (c == ' ') c = '_';
+        }
+
+        file << name << "," << weaponList[i].damage << "\n";
+    }
+    if (!chosenWeapon.empty()) {
+        file << "ChosenWeapon," << chosenWeapon << "\n";
+    }
+    file.close();
+}
+
+// Check if player owns a weapon
+bool ownsWeapon(const string &weaponName) {
+    for (int i = 0; i < weaponListSize; ++i) {
+        if (weaponList[i].name == weaponName) return true;
+    }
+    return false;
+}
 
 // Main function
 int main() {
     srand(time(0)); // Initialize random seed
     initializePlayerInventory();
     assignDefaultPricesToInventory();
+    loadWeapons();
     titleScreen();
     return 0;
 }
@@ -216,18 +273,15 @@ void saveGame() {
     if (saveFile.is_open()) {
         saveFile << "PlayerName: " << playerName << "\n";
         saveFile << "Health: " << playerHealth << "\n";
-        saveFile << "Strength: 20\n";
         saveFile << "Inventory: ";
         for (int i = 0; i < playerInventorySize; ++i) {
             saveFile << playerInventory[i].name;
             if (i < playerInventorySize - 1) saveFile << ", ";
         }
         saveFile << "\n";
-        saveFile << "Weapon: Long Sword, Rogue knife\n";
-        saveFile << "ChoosenWeapon: Rogue knife\n";
-        saveFile << "Location: Cave\n";
         saveFile << "Currency: " << gold << "\n";
         saveFile.close();
+        saveWeapons();
         cout << "Game saved successfully!\n";
     } else {
         cout << "Error saving the game!\n";
@@ -248,6 +302,9 @@ void receptionist() {
 void sellItems() {
     cout << "=== Sell Items ===\n";
     for (int i = 0; i < playerInventorySize; ++i) {
+        if (ownsWeapon(playerInventory[i].name)) {
+            continue; // Skip weapons
+        }
         cout << i + 1 << ". " << playerInventory[i].name 
              << " - " << playerInventory[i].price << " gold\n";
     }
@@ -256,16 +313,55 @@ void sellItems() {
     cin >> choice;
 
     if (choice > 0 && choice <= playerInventorySize) {
-        cout << "You sold " << playerInventory[choice - 1].name << " for " << playerInventory[choice - 1].price << " gold.\n";
-        gold += playerInventory[choice - 1].price;
+        if (ownsWeapon(playerInventory[choice - 1].name)) {
+            cout << "You cannot sell weapons!\n";
+        } else {
+            cout << "You sold " << playerInventory[choice - 1].name << " for " << playerInventory[choice - 1].price << " gold.\n";
+            gold += playerInventory[choice - 1].price;
 
-        // Remove item by shifting array
-        for (int i = choice - 1; i < playerInventorySize - 1; ++i) {
-            playerInventory[i] = playerInventory[i + 1];
+            // Remove item by shifting array
+            for (int i = choice - 1; i < playerInventorySize - 1; ++i) {
+                playerInventory[i] = playerInventory[i + 1];
+            }
+            --playerInventorySize;
         }
-        --playerInventorySize;
     }
     guild();
+}
+
+void travellingMerchant() {
+    cout << "=== Travelling Merchant ===\n";
+    for (int i = 0; i < merchantItemsSize; ++i) {
+        cout << i + 1 << ". " << merchantItems[i].name;
+
+        if (ownsWeapon(merchantItems[i].name)) {
+            cout << " (Already owned)";
+        } else {
+            cout << " (" << merchantItems[i].price << " gold)";
+        }
+
+        cout << "\n";
+    }
+    cout << "Enter the number to buy an item or 0 to exit: ";
+    int choice;
+    cin >> choice;
+
+    if (choice > 0 && choice <= merchantItemsSize) {
+        if (ownsWeapon(merchantItems[choice - 1].name)) {
+            cout << "You already own this weapon.\n";
+        } else if (gold >= merchantItems[choice - 1].price) {
+            gold -= merchantItems[choice - 1].price;
+            cout << "You bought " << merchantItems[choice - 1].name << ".\n";
+
+            // Add to weapon list if it's a weapon
+            if (merchantItems[choice - 1].name == "Long Sword") {
+                weaponList[weaponListSize++] = {"Long Sword", 50};
+            }
+        } else {
+            cout << "Not enough gold!\n";
+        }
+    }
+    camp();
 }
 
 void selectDungeon() {
@@ -320,7 +416,8 @@ void camp() {
     cout << "| 2. Interaksi Fellow Adventurer                |\n";
     cout << "| 3. Masuk ke dungeon                           |\n";
     cout << "| 4. Travelling Merchant (Beli senjata)         |\n";
-    cout << "| 5. Kembali ke Guild                           |\n";
+    cout << "| 5. Cek Inventory                              |\n";
+    cout << "| 6. Kembali ke Guild                           |\n";
     cout << "==================================================\n";
     cout << "Pilih: ";
     cin >> choice;
@@ -339,10 +436,13 @@ void camp() {
             travellingMerchant();
             break;
         case 5:
+            checkInventory();
+            break;
+        case 6:
             guild();
             break;
         default:
-            cout << "Pilihan Invalid. Balek to camp.\n";
+            cout << "Pilihan Invalid. Balik ke camp.\n";
             camp();
     }
 }
@@ -355,88 +455,36 @@ void bonfire() {
 }
 
 void interactFellowAdventurer() {
-    cout << "You exchange stories with a fellow adventurer and gain some wisdom.\n";
-    camp();
+    cout << "Interaksi dengan adventurer lain sedang tidak tersedia.\n";
 }
 
 void enterDungeon() {
-    dungeon();
+    cout << "Memasuki dungeon. Fungsi belum diimplementasikan.\n";
 }
 
-void travellingMerchant() {
-    cout << "=== Travelling Merchant ===\n";
-    for (int i = 0; i < merchantItemsSize; ++i) {
-        cout << i + 1 << ". " << merchantItems[i].name << " (" << merchantItems[i].price << " gold)\n";
+void checkInventory() {
+    cout << "=== Inventory ===\n";
+    for (int i = 0; i < playerInventorySize; ++i) {
+        cout << i + 1 << ". " << playerInventory[i].name << "\n";
     }
-    cout << "Enter the number to buy an item or 0 to exit: ";
+
+    cout << "\n=== Weapons ===\n";
+    for (int i = 0; i < weaponListSize; ++i) {
+        cout << i + 1 << ". " << weaponList[i].name << " (Damage: " << weaponList[i].damage << ")";
+        if (weaponList[i].name == chosenWeapon) {
+            cout << " [Chosen]";
+        }
+        cout << "\n";
+    }
+
+    cout << "\nChoose a weapon to equip (0 to cancel): ";
     int choice;
     cin >> choice;
 
-    if (choice > 0 && choice <= merchantItemsSize) {
-        if (gold >= merchantItems[choice - 1].price) {
-            gold -= merchantItems[choice - 1].price;
-            cout << "You bought " << merchantItems[choice - 1].name << ".\n";
-            playerInventory[playerInventorySize++] = {merchantItems[choice - 1].name, merchantItems[choice - 1].price};
-        } else {
-            cout << "Not enough gold!\n";
-        }
+    if (choice > 0 && choice <= weaponListSize) {
+        chosenWeapon = weaponList[choice - 1].name;
+        cout << "You have chosen " << chosenWeapon << ".\n";
+        saveWeapons();
     }
     camp();
-}
-
-void dungeon() {
-    int choice;
-    cout << "=== Dungeon ===\n";
-    cout << "1. Go deeper\n";
-    cout << "2. Check around\n";
-    cout << "3. Return\n";
-    cout << "Pilih : ";
-    cin >> choice;
-
-    switch (choice) {
-        case 1:
-            goDeeper();
-            break;
-        case 2:
-            checkAround();
-            break;
-        case 3:
-            camp();
-            break;
-        default:
-            cout << "Pilihan Invalid. Balek to dungeon.\n";
-            dungeon();
-    }
-}
-
-void goDeeper() {
-    cout << "You venture deeper into the dungeon and encounter a monster!\n";
-    int monsterHealth = rand() % 50 + 50;
-    while (playerHealth > 0 && monsterHealth > 0) {
-        int damage = rand() % 20 + 5;
-        cout << "You deal " << damage << " damage to the monster.\n";
-        monsterHealth -= damage;
-
-        if (monsterHealth > 0) {
-            damage = rand() % 15 + 5;
-            cout << "The monster deals " << damage << " damage to you.\n";
-            playerHealth -= damage;
-        }
-    }
-
-    if (playerHealth > 0) {
-        cout << "You defeated the monster and found 20 gold!\n";
-        gold += 20;
-    } else {
-        cout << "You were defeated. Returning to title screen.\n";
-        titleScreen();
-    }
-
-    dungeon();
-}
-
-void checkAround() {
-    cout << "You find a treasure chest and gain 10 gold!\n";
-    gold += 10;
-    dungeon();
 }
