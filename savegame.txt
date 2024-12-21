@@ -1,4 +1,4 @@
-PlayerName: Hafidz
+PlayerName: Nayaka
 Health: 100
-Inventory: Antique Hourglass, Potion
-Currency: 65
+Inventory: Antique Hourglass,20;Old Coin,15;Old Coin,15
+Currency: 100
