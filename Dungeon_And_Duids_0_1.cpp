@@ -118,7 +118,7 @@ void loadGame() {
             }
         }
         loadFile.close();
-        cout << "Mantap Ke Load rek!\n";
+        cout << "Mantap, Ke Load rek!\n";
         idleGuild();
     } else {
         cout << "G ad sv game. Starting a new game.\n";
