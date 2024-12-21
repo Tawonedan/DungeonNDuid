@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
 #include <ctime>
 using namespace std;
 
@@ -21,8 +20,30 @@ struct Item {
     int price;
 };
 
-vector<InventoryItem> playerInventory = { {"Antique Hourglass", 20}, {"Old Coin", 15}, {"Old Coin", 15} };
-vector<Item> merchantItems = { {"Long Sword", 50}, {"Shield", 30}, {"Potion", 10} };
+// Replace vector with arrays
+const int MAX_INVENTORY_SIZE = 100;
+const int MAX_MERCHANT_ITEMS = 10;
+InventoryItem playerInventory[MAX_INVENTORY_SIZE];
+int playerInventorySize = 3; // Initial inventory size
+Item merchantItems[MAX_MERCHANT_ITEMS] = { {"Long Sword", 50}, {"Shield", 30}, {"Potion", 10} };
+int merchantItemsSize = 3;
+
+// Initialize player inventory
+void initializePlayerInventory() {
+    playerInventory[0] = {"Antique Hourglass", 20};
+    playerInventory[1] = {"Old Coin", 15};
+    playerInventory[2] = {"Old Coin", 15};
+}
+
+void assignDefaultPricesToInventory() {
+    for (int i = 0; i < playerInventorySize; ++i) {
+        if (playerInventory[i].name == "Antique Hourglass") playerInventory[i].price = 20;
+        else if (playerInventory[i].name == "Old Coin") playerInventory[i].price = 15;
+        else if (playerInventory[i].name == "Long Sword") playerInventory[i].price = 50;
+        else if (playerInventory[i].name == "Shield") playerInventory[i].price = 30;
+        else if (playerInventory[i].name == "Potion") playerInventory[i].price = 10;
+    }
+}
 
 // Function declarations
 void titleScreen();
@@ -34,7 +55,6 @@ void inputName();
 void idleGuild();
 void guild();
 void receptionist();
-void busyMerchant();
 void rest();
 void saveGame();
 void selectDungeon();
@@ -54,6 +74,8 @@ void checkAround();
 // Main function
 int main() {
     srand(time(0)); // Initialize random seed
+    initializePlayerInventory();
+    assignDefaultPricesToInventory();
     titleScreen();
     return 0;
 }
@@ -90,37 +112,28 @@ void loadGame() {
     ifstream loadFile("savegame.txt");
     if (loadFile.is_open()) {
         string line;
+        playerInventorySize = 0;
         while (getline(loadFile, line)) {
             if (line.find("PlayerName:") == 0) {
                 playerName = line.substr(12);
             } else if (line.find("Health:") == 0) {
                 playerHealth = stoi(line.substr(8));
-            } else if (line.find("Strength:") == 0) {
-                // Strength could be used if added
             } else if (line.find("Inventory:") == 0) {
                 string inventoryLine = line.substr(11);
-                playerInventory.clear();
                 size_t pos = 0;
                 while ((pos = inventoryLine.find(", ")) != string::npos) {
-                    string itemName = inventoryLine.substr(0, pos);
-                    playerInventory.push_back({itemName, 0}); // Default price to be updated
+                    playerInventory[playerInventorySize++] = {inventoryLine.substr(0, pos), 0};
                     inventoryLine.erase(0, pos + 2);
                 }
                 if (!inventoryLine.empty()) {
-                    playerInventory.push_back({inventoryLine, 0});
-                }
-                // Assign prices to items (example: adjust based on your logic)
-                for (auto &item : playerInventory) {
-                    if (item.name == "Antique Hourglass") item.price = 20;
-                    else if (item.name == "Old Coin") item.price = 15;
-                    else if (item.name == "Long Sword") item.price = 50;
-                    // Add more mappings if needed
+                    playerInventory[playerInventorySize++] = {inventoryLine, 0};
                 }
             } else if (line.find("Currency:") == 0) {
                 gold = stoi(line.substr(10));
             }
         }
         loadFile.close();
+        assignDefaultPricesToInventory();
         cout << "Mantap, Ke Load rek!\n";
         idleGuild();
     } else {
@@ -128,7 +141,6 @@ void loadGame() {
         titleScreen();
     }
 }
-
 
 void newGame() {
     prologue();
@@ -204,16 +216,16 @@ void saveGame() {
     if (saveFile.is_open()) {
         saveFile << "PlayerName: " << playerName << "\n";
         saveFile << "Health: " << playerHealth << "\n";
-        saveFile << "Strength: 20\n"; // Example value for strength
+        saveFile << "Strength: 20\n";
         saveFile << "Inventory: ";
-        for (size_t i = 0; i < playerInventory.size(); ++i) {
+        for (int i = 0; i < playerInventorySize; ++i) {
             saveFile << playerInventory[i].name;
-            if (i < playerInventory.size() - 1) saveFile << ", ";
+            if (i < playerInventorySize - 1) saveFile << ", ";
         }
         saveFile << "\n";
-        saveFile << "Weapon: Long Sword, Rogue knife\n"; // Example weapons
-        saveFile << "ChoosenWeapon: Rogue knife\n"; // Example chosen weapon
-        saveFile << "Location: Cave\n"; // Example location
+        saveFile << "Weapon: Long Sword, Rogue knife\n";
+        saveFile << "ChoosenWeapon: Rogue knife\n";
+        saveFile << "Location: Cave\n";
         saveFile << "Currency: " << gold << "\n";
         saveFile.close();
         cout << "Game saved successfully!\n";
@@ -235,7 +247,7 @@ void receptionist() {
 
 void sellItems() {
     cout << "=== Sell Items ===\n";
-    for (size_t i = 0; i < playerInventory.size(); ++i) {
+    for (int i = 0; i < playerInventorySize; ++i) {
         cout << i + 1 << ". " << playerInventory[i].name 
              << " - " << playerInventory[i].price << " gold\n";
     }
@@ -243,10 +255,15 @@ void sellItems() {
     int choice;
     cin >> choice;
 
-    if (choice > 0 && choice <= playerInventory.size()) {
+    if (choice > 0 && choice <= playerInventorySize) {
         cout << "You sold " << playerInventory[choice - 1].name << " for " << playerInventory[choice - 1].price << " gold.\n";
         gold += playerInventory[choice - 1].price;
-        playerInventory.erase(playerInventory.begin() + (choice - 1));
+
+        // Remove item by shifting array
+        for (int i = choice - 1; i < playerInventorySize - 1; ++i) {
+            playerInventory[i] = playerInventory[i + 1];
+        }
+        --playerInventorySize;
     }
     guild();
 }
@@ -348,18 +365,18 @@ void enterDungeon() {
 
 void travellingMerchant() {
     cout << "=== Travelling Merchant ===\n";
-    for (size_t i = 0; i < merchantItems.size(); ++i) {
+    for (int i = 0; i < merchantItemsSize; ++i) {
         cout << i + 1 << ". " << merchantItems[i].name << " (" << merchantItems[i].price << " gold)\n";
     }
     cout << "Enter the number to buy an item or 0 to exit: ";
     int choice;
     cin >> choice;
 
-    if (choice > 0 && choice <= merchantItems.size()) {
+    if (choice > 0 && choice <= merchantItemsSize) {
         if (gold >= merchantItems[choice - 1].price) {
             gold -= merchantItems[choice - 1].price;
             cout << "You bought " << merchantItems[choice - 1].name << ".\n";
-            playerInventory.push_back({merchantItems[choice - 1].name, merchantItems[choice - 1].price});
+            playerInventory[playerInventorySize++] = {merchantItems[choice - 1].name, merchantItems[choice - 1].price};
         } else {
             cout << "Not enough gold!\n";
         }
