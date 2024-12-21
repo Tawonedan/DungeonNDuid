@@ -1,3 +1,3 @@
-Long_Sword,50
-Rogue_Knife,35
-ChosenWeapon,Long Sword
+Long_Sword,20
+pisau,10
+ChosenWeapon,Rogue Knife

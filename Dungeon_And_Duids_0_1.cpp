@@ -9,6 +9,7 @@ using namespace std;
 string playerName;
 int playerHealth = 100;
 int gold = 50;
+int weaponCount = 0;
 string chosenWeapon = "";
 
 // Structs for inventory and weapons
@@ -32,7 +33,7 @@ int playerInventorySize = 3; // Initial inventory size
 int weaponListSize = 0;      // Initial weapon list size
 
 // Merchant items
-InventoryItem merchantItems[MAX_MERCHANT_ITEMS] = { {"Long Sword", 50}, {"Shield", 30}, {"Potion", 10} };
+InventoryItem merchantItems[MAX_MERCHANT_ITEMS] = { {"Long Sword", 20}, {"Rogue Knife", 35}, {"pisau", 10}, };
 int merchantItemsSize = 3;
 
 // Initialize player inventory
@@ -142,8 +143,8 @@ void titleScreen() {
     cout << "==================================================\n";
     cout << "|                 Dungeon n Duid                 |\n";
     cout << "==================================================\n";
-    cout << "| 1. Load game                                   |\n";
-    cout << "| 2. New Game                                    |\n";
+    cout << "| 1. New Game                                    |\n";
+    cout << "| 2. Load Game                                   |\n";
     cout << "| 3. Keluar                                      |\n";
     cout << "==================================================\n";
     cout << "Pilih: ";
@@ -151,10 +152,10 @@ void titleScreen() {
 
     switch (choice) {
         case 1:
-            loadGame();
+            newGame();
             break;
         case 2:
-            newGame();
+            loadGame();
             break;
         case 3:
             exitGame();
@@ -353,16 +354,18 @@ void travellingMerchant() {
             gold -= merchantItems[choice - 1].price;
             cout << "You bought " << merchantItems[choice - 1].name << ".\n";
 
-            // Add to weapon list if it's a weapon
-            if (merchantItems[choice - 1].name == "Long Sword") {
-                weaponList[weaponListSize++] = {"Long Sword", 50};
-            }
+            // Add the weapon to the player's weapon list
+            weaponList[weaponCount++] = {merchantItems[choice - 1].name, merchantItems[choice - 1].price};
+            
+            // Save the updated weapon list to the file
+            saveWeapons();
         } else {
             cout << "Not enough gold!\n";
         }
     }
     camp();
 }
+
 
 void selectDungeon() {
     int choice;
