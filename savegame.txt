@@ -1,0 +1,8 @@
+PlayerName: Hafidz
+Health: 100
+Strength: 20
+Inventory: Antique Hourglass, Old Coin, Old Coin, Long Sword
+Weapon: Long Sword, Rogue knife
+ChoosenWeapon: Rogue knife
+Location: Cave
+Currency: 10
