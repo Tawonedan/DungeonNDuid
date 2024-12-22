@@ -1,0 +1,38 @@
+/// kroco ///
+EnemyName: Skeletals
+Health: 70
+Strength: 10
+Type: Common
+
+EnemyName: Armed Skeletals
+Health: 80
+Strength: 15
+Type: Common
+
+EnemyName: Rogue Scales
+Health: 65
+Strength: 18
+Type: Common
+
+EnemyName: Feral Mandrake
+Health: 100
+Strength: 12
+Type: Common
+
+EnemyName: Mimic Chest
+Health: 70
+Strength: 14
+Type: Common
+
+/// Mini Boss ///
+EnemyName: Guardian Gargoyle
+Health: 120
+Strength: 18
+Type: MiniBoss
+
+
+/// Boss ///
+EnemyName: Lymanien - Drakeborn
+Health: 150
+Strength: 15
+Type: Boss

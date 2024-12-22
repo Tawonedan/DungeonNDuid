@@ -1,21 +1,30 @@
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <ctime>
 #include <sstream>
+#include <ctime> 
+#include <cmath>
+#include <cstdint>
+#include <cstring>
+#include <string>
+
 using namespace std;
 
-// Global variables
-string playerName;
-int playerHealth = 100;
-int gold = 50;
-int weaponCount = 0;
-int currentDepth = 0;
-int maxDepth = 0;
-bool hasCheckedAround = false;
-string chosenWeapon = "";
+////////// Declare Struct ////////////
+struct Player {
+    string name;
+    int health;
+    int strength;
+    string inventory;
+    string location;
+    int currency;
+};
 
-// Structs for inventory and weapons
+struct Enemy {
+    string name;
+    int health;
+    int strength;
+};
+
 struct InventoryItem {
     string name;
     int price;
@@ -30,6 +39,10 @@ struct Item {
     int value;
 };
 
+////////// Declare Struct ////////////
+
+
+////////// Array Declare ////////////
 const Item itemList[] = {
     {"Golden Necklace", 50},
     {"Silver Boot", 15},
@@ -38,20 +51,103 @@ const Item itemList[] = {
     {"Antique Belt", 25},
     {"Golden Coin", 30}
 };
-const int numItems = sizeof(itemList) / sizeof(itemList[0]);
 
-// Replace vector with arrays
+////////// Array Declare ////////////
+
+
+////////// General Variable Declare ////////////
 const int MAX_INVENTORY_SIZE = 100;
 const int MAX_WEAPONS_SIZE = 50;
 const int MAX_MERCHANT_ITEMS = 10;
-InventoryItem playerInventory[MAX_INVENTORY_SIZE];
-Weapon weaponList[MAX_WEAPONS_SIZE];
+const int MAX_SIZE = 10; // Batas maksimum data
+const int MAX_ITEMS = 100; // Batas maksimum data
+const int numItems = sizeof(itemList) / sizeof(itemList[0]);
+
+int playerHealth = 100;
+int gold = 50;
+int weaponCount = 0;
+int currentDepth = 0;
+int maxDepth = 0;
 int playerInventorySize = 3; // Initial inventory size
 int weaponListSize = 0;      // Initial weapon list size
-
-// Merchant items
-InventoryItem merchantItems[MAX_MERCHANT_ITEMS] = { {"Long Sword", 20}, {"Rogue Knife", 35}, {"pisau", 10}, };
 int merchantItemsSize = 3;
+int count = 0; // Variabel global untuk jumlah elemen aktif
+int currentWeaponDamage;
+
+bool hasCheckedAround = false;
+bool itemInitialize = false;
+bool battleOngoing = false;
+
+string playerName;
+string currentEnemyName;
+string chosenWeapon = "";
+string items[MAX_INVENTORY_SIZE];
+string inventoryLine;
+////////// General Variable Declare ////////////
+
+
+////////// Struct Variable Declare ////////////
+InventoryItem playerInventory[MAX_INVENTORY_SIZE];
+InventoryItem merchantItems[MAX_MERCHANT_ITEMS] = { {"Long Sword", 20}, {"Rogue Knife", 35}, {"pisau", 10}, };
+
+Weapon weaponList[MAX_WEAPONS_SIZE];
+
+Player dataList[MAX_SIZE]; // Array untuk menyimpan data
+Player* loadAllPlayers(int& playerCount);
+Player currentPlayer;
+
+
+Enemy loadEnemyData(const string& enemyName);
+Enemy currentEnemy;
+
+
+////////// Struct Variable Declare ////////////
+
+
+////////// Function Declare ////////////
+void titleScreen();
+void loadGame();
+void newGame();
+void exitGame();
+void saveGame();
+
+void prologue();
+void inputName();
+
+void idleGuild();
+void guild();
+void receptionist();
+void rest();
+
+void selectDungeon();
+void skibidiCastle();
+void elMachoPrison();
+void sigmaTempleRuin();
+
+void camp();
+void bonfire();
+void interactFellowAdventurer();
+void enterDungeon();
+void travellingMerchant();
+void sellItems();
+void checkInventory();
+
+void dungeon();
+void goDeeper();
+void checkAround();
+void battle(const string& playerName, const string& enemyName);
+void handleChest();
+void handleSpecialEvent();
+void displayChest();
+void displayChestResult(bool foundTreasure, const Item& treasure);
+void displayDungeonMenu();
+void eventKolam();
+void eventBadut();
+Item getRandomItem();
+////////// Function Declare ////////////
+
+
+
 
 // Initialize player inventory
 void initializePlayerInventory() {
@@ -68,40 +164,6 @@ void assignDefaultPricesToInventory() {
         else if (playerInventory[i].name == "Potion") playerInventory[i].price = 10;
     }
 }
-
-void titleScreen();
-void loadGame();
-void newGame();
-void exitGame();
-void prologue();
-void inputName();
-void idleGuild();
-void guild();
-void receptionist();
-void rest();
-void saveGame();
-void selectDungeon();
-void skibidiCastle();
-void elMachoPrison();
-void sigmaTempleRuin();
-void camp();
-void bonfire();
-void interactFellowAdventurer();
-void enterDungeon();
-void travellingMerchant();
-void sellItems();
-void checkInventory();
-void dungeon();
-void goDeeper();
-void checkAround();
-void handleChest();
-void handleSpecialEvent();
-Item getRandomItem();
-void displayChest();
-void displayChestResult(bool foundTreasure, const Item& treasure);
-void displayDungeonMenu();
-void eventKolam();
-void eventBadut();
 
 void resetWeapons() {
     weaponListSize = 0; // Reset weapon inventory
@@ -163,6 +225,7 @@ void saveWeapons() {
     } else {
         cout << "Error saving weapons!\n"; // Debugging log
     }
+
 }
 
 
@@ -396,6 +459,7 @@ void eventKolam() {
 
 
 void navigateDepth(int depth) {
+
     if (depth < 1) {
         cout << "You are at the entrance. Returning to camp.\n";
         camp();
@@ -422,7 +486,9 @@ void navigateDepth(int depth) {
     int event = randomRange(0, 9);
     if (event < 6) {
         cout << "You encounter an enemy!\n";
-        // Placeholder untuk logika pertempuran
+        currentEnemyName = "Rogue Scales";
+        loadEnemyData(currentEnemyName);
+        battle(playerName, currentEnemyName);
     } else if (event < 8) {
         cout << "You find a chest!\n";
         handleChest();
@@ -430,7 +496,10 @@ void navigateDepth(int depth) {
         handleSpecialEvent();
     }
 
+    if (!battleOngoing) {
     dungeon();
+    }
+    
 }
 
 void checkAround() {
@@ -452,6 +521,321 @@ void checkAround() {
     cout << "You remain at depth " << currentDepth << ".\n";
     dungeon();
 }
+
+////////////////////////////////// Inventory Function /////////////////////////////////// 
+void displayInventory() {
+    if (count == 0) {
+        cout << "\nInventory kosong!" << endl;
+    } else {
+        cout << "\nInventory items:" << endl;
+        for (int i = 0; i < count; i++) {
+            cout << i + 1 << ". " << items[i] << endl;
+        }
+    }
+}
+int convertInventory(const string& input, string items[], int max_size) {
+    // Ubah string menjadi array karakter untuk strtok
+    char cstr[input.size() + 1];
+    strcpy(cstr, input.c_str());
+    
+    // Pisahkan string berdasarkan delimiter ","
+    char* token = strtok(cstr, ",");
+    int index = 0;
+
+    while (token != nullptr && index < max_size) {
+        // Hilangkan spasi di awal jika ada
+        while (*token == ' ') token++;
+
+        items[index] = token; // Masukkan token ke array
+        index++;
+        
+        token = strtok(nullptr, ","); // Ambil token berikutnya
+    }
+
+    return index; // Kembalikan jumlah elemen yang diisi
+
+}
+
+// Fungsi untuk menghapus elemen dari array
+int removeItemFromArray(string items[], int count, int indexToRemove) {
+    if (indexToRemove < 0 || indexToRemove >= count) {
+        cout << "Invalid index!" << endl;
+        return count; // Tidak ada yang dihapus
+    }
+
+    // Geser elemen ke kiri untuk menimpa elemen yang dihapus
+    for (int i = indexToRemove; i < count - 1; i++) {
+        items[i] = items[i + 1];
+    }
+
+    return count - 1; // Kurangi jumlah item aktif
+}
+
+////////////////////////////////// Inventory Function /////////////////////////////////// 
+
+
+
+////////////////////////////////// Battle Function /////////////////////////////////// 
+
+Enemy loadEnemyData(const string& enemyName) {
+    ifstream inFile("enemyData.txt");
+    if (!inFile) {
+        cerr << "Error: Could not open enemyAsset.txt!" << endl;
+        return Enemy{"", 0, 0}; // Mengembalikan enemy default jika file tidak ditemukan
+    }
+
+    string line;
+
+    bool foundEnemy = false;
+
+    while (getline(inFile, line)) {
+        stringstream ss(line);
+        string key, value;
+
+        getline(ss, key, ':');   // Baca key sebelum ':'
+        getline(ss, value);     // Baca value setelah ':'
+
+        if (!value.empty() && value[0] == ' ') {
+            value = value.substr(1); // Hilangkan spasi awal jika ada
+        }
+
+        if (key == "EnemyName") {
+            if (value == enemyName) {
+                foundEnemy = true;
+                currentEnemy = Enemy(); // Reset data enemy
+                currentEnemy.name = value;
+            }
+        } else if (key == "Health" && foundEnemy) {
+            currentEnemy.health = stoi(value);
+        } else if (key == "Strength" && foundEnemy) {
+            currentEnemy.strength = stoi(value);
+        }
+
+        // Jika sudah membaca semua data musuh yang diperlukan, keluar dari loop
+        if (foundEnemy && key == "Strength") {
+            break;
+        }
+    }
+
+    inFile.close();
+
+    if (!foundEnemy) {
+        cerr << "Error: Enemy '" << enemyName << "' not found in enemyAsset.txt!" << endl;
+        return Enemy{"", 0, 0}; // Mengembalikan enemy default jika tidak ditemukan
+    }
+
+    return currentEnemy;
+}
+
+void damageStr(const string& weaponName, int& enemyHealth) {
+    for (int i = 0; i < weaponListSize; ++i) {
+        if (weaponList[i].name == weaponName) {
+            int damage = weaponList[i].damage;
+
+            // Kurangi kesehatan musuh
+            currentEnemy.health -= damage;
+
+            // Tampilkan hasil serangan
+            cout << "You attacked the enemy with " << weaponName 
+                 << " and dealt " << damage << " damage!\n";
+            cout << "Enemy health is now: " << max(enemyHealth, 0) << "\n";
+
+            return;
+        }
+    }
+
+    // Jika senjata tidak ditemukan
+    cout << "Weapon not found! No damage dealt.\n";
+}
+
+
+void playerAttack() {
+    currentEnemy.health -= currentPlayer.strength;
+    cout << "You dealt " << currentPlayer.strength << " damage to the " << currentEnemy.name << ".\n";
+
+}
+
+void enemyAttack() {
+    playerHealth -= currentEnemy.strength;
+    cout << "The " << currentEnemy.name << " dealt " << currentEnemy.strength << " damage to you.\n";
+
+}
+
+void useBlazingBuster() {
+    currentEnemy.health -= 30;
+}
+
+void useRevitalize() {
+    playerHealth += 50;
+}
+
+void playerSkill() {
+    cout << "\nChoose your skill:   [1]Blazing Buster    [2]Revitalize\n";
+    cout << "Enter your choice: ";
+                
+    int skillChoice;
+    cin >> skillChoice;
+
+    switch (skillChoice) {
+    case 1:
+        useBlazingBuster();
+    break;
+    case 2:
+        useRevitalize();
+    break;
+
+    default:
+    cout << "\nInvalid skill choice.\n";
+    }
+}
+
+void playerDefend() {
+    int blockRate = randomRange(1, 4);
+
+    int blockedPercentage = blockRate * 25;
+    cout << "You choose to defend and blocked " << blockedPercentage << "% of the damage!\n";
+    int incomingDamage = currentEnemy.strength;
+    int blockedDamage = incomingDamage * (blockedPercentage / 100.0);
+    int damageTaken = incomingDamage - blockedDamage;
+    playerHealth -= damageTaken;
+    cout << "You took " << damageTaken << " damage after blocking.\n";
+
+}
+
+string useItems() {
+    string usedItem;
+
+    if (!itemInitialize) { // Inisialisasi inventori hanya sekali
+        string input = inventoryLine; // String input
+        count = convertInventory(input, items, MAX_INVENTORY_SIZE);
+        itemInitialize = true;
+    }
+
+
+
+    while (true) {
+        displayInventory();
+
+        if (count == 0) {
+            break; // Keluar dari loop jika inventori kosong
+        }
+
+        int itemChoice;
+        cout << "\nEnter the number of the item you want to remove (or 0 to exit): ";
+        cin >> itemChoice;
+
+        if (itemChoice < 1 || itemChoice > count) {
+            cout << "Pilihan tidak valid!" << endl;
+            continue;
+        }
+
+        if (itemChoice == 0) {
+            break; // Keluar dari program jika pengguna memasukkan 0
+        }
+
+        if (itemChoice > 0 && itemChoice <= count) {
+            cout << "You selected: " << items[itemChoice - 1] << endl;
+        } else {
+            cout << "Invalid selection!" << endl;
+        }
+
+        count = removeItemFromArray(items, count, itemChoice - 1);
+        
+        usedItem = items[itemChoice - 1];
+        break;
+
+    }
+
+    cout << "\nUpdated inventory:" << endl;
+    for (int i = 0; i < count; i++) {
+        cout << i + 1 << ". " << items[i] << endl;
+    }
+
+    if (usedItem == "Potion") {
+        currentPlayer.health += 30;
+    }
+    
+}
+
+
+void battle(const string& playerName, const string& enemyName) {
+    battleOngoing = true;
+
+    cout << "Battle starts! " << playerName << " vs " << currentEnemy.name << endl;
+
+    cout << "Initial Health| Player Health: " << playerHealth << " |  Enemy Health:  " << currentEnemy.health << endl;
+
+    while (battleOngoing && playerHealth > 0 && currentEnemy.health > 0) {
+        cout << "Battle ongoing between " << playerName << " vs " << enemyName << endl;
+
+
+        cout << "Your HP: " << playerHealth << " | Enemy HP: " << currentEnemy.health << "\n";
+        cout << "Choose your action:   [1]Attack    [2]Defend    [3]Skill    [4]Items    [5]Escape \n";
+        cout << "Enter your choice:";
+        int battleChoice;
+        cin >> battleChoice;
+        switch (battleChoice) {
+            case 1: {
+               if (!chosenWeapon.empty()) {
+                    damageStr(chosenWeapon, currentEnemy.health);
+                } else {
+                    cout << "No weapon equipped! You deal no damage.\n";
+                }
+                if (currentEnemy.health > 0) {
+                    enemyAttack();
+                }
+                break;
+            }
+            case 2: {
+                playerDefend();
+                break;
+            }
+            case 3: {
+                cout << "You choose to use skill\n";
+                playerSkill();
+                enemyAttack();
+                break;
+            }
+            case 4: {
+                cout << "You Used item\n";
+                useItems();
+                break;
+            }
+            case 5: {
+                cout << "You choose to escape\n";
+
+                int escapeChance = randomRange(0, 5);
+
+                if (escapeChance == 1) {
+                    cout << "You managed to escape\n";
+                    battleOngoing = false;
+                } else {
+                    cout << "You failed to escape\n";
+                    enemyAttack();
+                }
+                             
+                    
+                break;
+            }
+            default:
+                cout << L"Invalid choice.\n";
+        }
+
+        if (playerHealth > 0 && currentEnemy.health <= 0) {
+            cout << "\nYou have defeated the enemy!.\n";
+            battleOngoing = false;
+        }
+
+        if (playerHealth <= 0) {
+            cout << "\nYou are defeated by the enemy.....\n";
+            battleOngoing = false;
+        }
+
+    }
+
+}
+////////////////////////////////// Battle Function /////////////////////////////////// 
+
 
 void dungeon() {
     int choice;
@@ -531,24 +915,24 @@ void loadGame() {
             } else if (line.find("Health:") == 0) {
                 playerHealth = stoi(line.substr(8));
             } else if (line.find("Inventory:") == 0) {
-                string inventoryLine = line.substr(11);
-                size_t pos = 0;
-                while ((pos = inventoryLine.find(";")) != string::npos) {
-                    string item = inventoryLine.substr(0, pos);
-                    size_t commaPos = item.find(",");
-                    playerInventory[playerInventorySize++] = {
-                        item.substr(0, commaPos), 
-                        stoi(item.substr(commaPos + 1))
-                    };
-                    inventoryLine.erase(0, pos + 1);
-                }
-                if (!inventoryLine.empty()) {
-                    size_t commaPos = inventoryLine.find(",");
-                    playerInventory[playerInventorySize++] = {
-                        inventoryLine.substr(0, commaPos), 
-                        stoi(inventoryLine.substr(commaPos + 1))
-                    };
-                }
+                inventoryLine = line.substr(11);
+                // size_t pos = 0;
+                // while ((pos = inventoryLine.find(";")) != string::npos) {
+                //     string item = inventoryLine.substr(0, pos);
+                //     size_t commaPos = item.find(",");
+                //     playerInventory[playerInventorySize++] = {
+                //         item.substr(0, commaPos), 
+                //         stoi(item.substr(commaPos + 1))
+                //     };
+                //     inventoryLine.erase(0, pos + 1);
+                // }
+                // if (!inventoryLine.empty()) {
+                //     size_t commaPos = inventoryLine.find(",");
+                //     playerInventory[playerInventorySize++] = {
+                //         inventoryLine.substr(0, commaPos), 
+                //         stoi(inventoryLine.substr(commaPos + 1))
+                //     };
+                // }
             } else if (line.find("Currency:") == 0) {
                 gold = stoi(line.substr(10));
             }
@@ -653,10 +1037,6 @@ void saveGame() {
         cout << "Error saving the game!\n"; // Debugging log
     }
 }
-
-
-
-
 
 void rest() {
     cout << "You rest and save the game. Your health is fully restored.\n";
@@ -852,6 +1232,7 @@ void checkInventory() {
     for (int i = 0; i < weaponListSize; ++i) {
         cout << i + 1 << ". " << weaponList[i].name << " (Damage: " << weaponList[i].damage << ")";
         if (weaponList[i].name == chosenWeapon) {
+            // currentWeaponDamage = weaponListSize[i].damage;
             cout << " [Chosen]";
         }
         cout << "\n";

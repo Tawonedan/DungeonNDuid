@@ -1,4 +1,4 @@
-PlayerName: Nayaka
+PlayerName: Nulsey
 Health: 100
-Inventory: Antique Hourglass,20;Old Coin,15;Old Coin,15;Golden Coin,30
-Currency: 25
+Inventory: Potion, Potion, Potion 
+Currency: 105
