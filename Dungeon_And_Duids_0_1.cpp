@@ -79,10 +79,11 @@ bool itemInitialize = false;
 bool battleOngoing = false;
 
 string playerName;
-string currentEnemyName;
+
 string chosenWeapon = "";
 string items[MAX_INVENTORY_SIZE];
 string inventoryLine;
+string currentEnemyName;
 ////////// General Variable Declare ////////////
 
 
@@ -97,7 +98,7 @@ Player* loadAllPlayers(int& playerCount);
 Player currentPlayer;
 
 
-Enemy loadEnemyData(const string& enemyName);
+Enemy loadEnemyData(string enemyName);
 Enemy currentEnemy;
 
 
@@ -144,6 +145,9 @@ void displayDungeonMenu();
 void eventKolam();
 void eventBadut();
 Item getRandomItem();
+
+string generateCommonEnemy();
+
 ////////// Function Declare ////////////
 
 
@@ -312,7 +316,10 @@ void handleChest() {
             gold += treasure.value;
         } else {
             displayChestResult(false, Item{"Mimic", 0});
-            // Tambahkan logika pertarungan mimic di sini
+            
+            string EnemyName = "Mimic Chest";
+            loadEnemyData(EnemyName);
+            battle(playerName, EnemyName);
         }
     } else {
         cout << "You leave the chest behind.\n";
@@ -389,7 +396,9 @@ void handleSpecialEvent() {
                 gold += foundGold;
             } else {
                 cout << "One of the corpses reanimates as a zombie! Prepare to fight!\n";
-                // Placeholder: Tambahkan logika pertempuran zombie di sini
+                string EnemyName = "Zombie";
+                loadEnemyData(EnemyName);
+                battle(playerName, EnemyName);
             }
         } else {
             cout << "You decide to leave the corpses alone and move on.\n";
@@ -486,9 +495,11 @@ void navigateDepth(int depth) {
     int event = randomRange(0, 9);
     if (event < 6) {
         cout << "You encounter an enemy!\n";
-        currentEnemyName = "Rogue Scales";
-        loadEnemyData(currentEnemyName);
-        battle(playerName, currentEnemyName);
+
+
+        string EnemyName = generateCommonEnemy();
+        loadEnemyData(EnemyName);
+        battle(playerName, EnemyName);
     } else if (event < 8) {
         cout << "You find a chest!\n";
         handleChest();
@@ -577,7 +588,7 @@ int removeItemFromArray(string items[], int count, int indexToRemove) {
 
 ////////////////////////////////// Battle Function /////////////////////////////////// 
 
-Enemy loadEnemyData(const string& enemyName) {
+Enemy loadEnemyData(string enemyName) {
     ifstream inFile("enemyData.txt");
     if (!inFile) {
         cerr << "Error: Could not open enemyAsset.txt!" << endl;
@@ -625,6 +636,28 @@ Enemy loadEnemyData(const string& enemyName) {
     }
 
     return currentEnemy;
+}
+
+string generateCommonEnemy() {
+    int commonEnemyRate = randomRange(1, 4);
+
+    switch (commonEnemyRate) {
+    case 1:
+        return "Skeletals";
+        break;
+    case 2:
+        return  "Armed Skeletals";
+        break;
+    case 3:
+        return  "Rogue Scales";
+        break;
+    case 4:
+        return  "Feral Mandrake";
+        break;
+    default:
+        break;
+    }
+
 }
 
 void damageStr(const string& weaponName, int& enemyHealth) {
@@ -710,8 +743,6 @@ string useItems() {
         count = convertInventory(input, items, MAX_INVENTORY_SIZE);
         itemInitialize = true;
     }
-
-
 
     while (true) {
         displayInventory();

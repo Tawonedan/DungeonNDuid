@@ -1,4 +1,4 @@
 PlayerName: Nulsey
-Health: 100
-Inventory: Potion, Potion, Potion 
-Currency: 105
+Health: 11
+Inventory: Gilded Watch,20;Silver Boot,15
+Currency: 115
