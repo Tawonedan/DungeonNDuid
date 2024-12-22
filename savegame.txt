@@ -1,4 +1,4 @@
 PlayerName: Nayaka
 Health: 100
-Inventory: Antique Hourglass,20;Old Coin,15;Old Coin,15
-Currency: 100
+Inventory: Antique Hourglass,20;Old Coin,15;Old Coin,15;Golden Coin,30
+Currency: 25

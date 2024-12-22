@@ -1,4 +1,3 @@
 Rogue_Knife,35
 pisau,10
-Long_Sword,20
-ChosenWeapon,Long Sword
+ChosenWeapon,Rogue Knife

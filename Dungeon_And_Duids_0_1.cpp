@@ -103,6 +103,18 @@ void displayDungeonMenu();
 void eventKolam();
 void eventBadut();
 
+void resetWeapons() {
+    weaponListSize = 0; // Reset weapon inventory
+    chosenWeapon = ""; // Reset chosen weapon
+    ofstream file("weapons.txt", ios::out | ios::trunc); // Overwrite file
+    if (file.is_open()) {
+        file.close();
+        cout << "Weapon inventory reset successfully!\n";
+    } else {
+        cout << "Error resetting weapon inventory!\n";
+    }
+}
+
 // Load and save weapons to file
 void loadWeapons() {
     ifstream file("weapons.txt");
@@ -476,7 +488,6 @@ int main() {
     srand(time(0)); // Initialize random seed
     initializePlayerInventory();
     assignDefaultPricesToInventory();
-    loadWeapons();
     titleScreen();
     return 0;
 }
@@ -522,14 +533,14 @@ void loadGame() {
             } else if (line.find("Inventory:") == 0) {
                 string inventoryLine = line.substr(11);
                 size_t pos = 0;
-                while ((pos = inventoryLine.find("; ")) != string::npos) {
+                while ((pos = inventoryLine.find(";")) != string::npos) {
                     string item = inventoryLine.substr(0, pos);
                     size_t commaPos = item.find(",");
                     playerInventory[playerInventorySize++] = {
                         item.substr(0, commaPos), 
                         stoi(item.substr(commaPos + 1))
                     };
-                    inventoryLine.erase(0, pos + 2);
+                    inventoryLine.erase(0, pos + 1);
                 }
                 if (!inventoryLine.empty()) {
                     size_t commaPos = inventoryLine.find(",");
@@ -543,16 +554,21 @@ void loadGame() {
             }
         }
         loadFile.close();
+        loadWeapons(); // Load weapons including chosen weapon
         cout << "Game loaded successfully!\n";
+        idleGuild(); // Lanjutkan ke guild setelah memuat game
     } else {
         cout << "No save game found. Starting a new game.\n";
+        newGame(); // Mulai permainan baru jika file save tidak ditemukan
     }
 }
+
 
 
 void newGame() {
     prologue();
     inputName();
+    resetWeapons();
     idleGuild();
 }
 
