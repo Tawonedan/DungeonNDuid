@@ -1,4 +1,4 @@
-PlayerName: Nayaka
+PlayerName: Nayuka
 Health: 100
-Inventory: Antique Hourglass,20;Old Coin,15;Old Coin,15;Gilded Watch,20
-Currency: 50
+Inventory: Antique Hourglass,20;Old Coin,15;Old Coin,15;Golden Necklace,50;Golden Coin,30
+Currency: 130
