@@ -262,7 +262,7 @@ void displayDungeonMenu() {
     cout << "|2. Cek sekeliling.                |\n";
     cout << "|3. Kembali.                       |\n";
     if (currentDepth % 4 == 0 && currentDepth != 0) {
-        cout << "|4. Istirahat.                          |\n";
+        cout << "|4. Istirahat.                 |\n";
     }
     cout << "====================================\n\n";
     cout << "Masukkan pilihan: ";
