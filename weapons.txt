@@ -1,3 +1,0 @@
-Rogue_Knife,35
-pisau,10
-ChosenWeapon,Rogue Knife

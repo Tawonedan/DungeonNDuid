@@ -788,21 +788,38 @@ string useItems() {
     
 }
 
+void displayBattleHeader(const string& playerName, const string& enemyName) {
+    cout << "\n====================================\n";
+    cout << "|          Battle Begins!          |\n";
+    cout << "====================================\n";
+    cout << playerName << " faces off against " << enemyName << "!\n";
+    cout << "====================================\n";
+}
+
+void displayBattleStatus(int playerHP, int enemyHP, const string& enemyName) {
+    cout << "\n====================================\n";
+    cout << "|            Battle Status         |\n";
+    cout << "====================================\n";
+    cout << "| Player HP: " << playerHP << "                      |\n";
+    cout << "| " << enemyName << " HP: " << enemyHP << "                    |\n";
+    cout << "====================================\n";
+}
+
+void displayBattleMenu() {
+    cout << "\n=============================================================\n";
+    cout << "|[1] Attack | [2] Defend | [3] Skill | [4] Items | [5] Escape |\n";
+    cout << "===============================================================\n";
+    cout << "Enter your choice: ";
+}
+
 
 void battle(const string& playerName, const string& enemyName) {
     battleOngoing = true;
-
-    cout << "Battle starts! " << playerName << " vs " << currentEnemy.name << endl;
-
-    cout << "Initial Health| Player Health: " << playerHealth << " |  Enemy Health:  " << currentEnemy.health << endl;
+    displayBattleHeader(playerName, currentEnemy.name);
 
     while (battleOngoing && playerHealth > 0 && currentEnemy.health > 0) {
-        cout << "Battle ongoing between " << playerName << " vs " << enemyName << endl;
-
-
-        cout << "Your HP: " << playerHealth << " | Enemy HP: " << currentEnemy.health << "\n";
-        cout << "Choose your action:   [1]Attack    [2]Defend    [3]Skill    [4]Items    [5]Escape \n";
-        cout << "Enter your choice:";
+        displayBattleStatus(playerHealth, currentEnemy.health, currentEnemy.name);
+        displayBattleMenu();
         int battleChoice;
         cin >> battleChoice;
         switch (battleChoice) {
