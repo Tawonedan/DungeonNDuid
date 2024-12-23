@@ -867,15 +867,15 @@ void dungeon() {
             break;
         case 4: // Rest 
             if (currentDepth % 4 == 0 && currentDepth != 0) {
-                cout << "You rest and recover health.\n";
+                cout << "Kamu beristirahat dan recover health.\n";
                 increaseHealth(50); // Pulihkan 50 HP
             } else {
-                cout << "Invalid choice. Returning to dungeon menu.\n";
+                cout << "Pilihan Invalid. Kembali ke dungeon menu.\n";
             }
             dungeon(); // Kembali ke menu dungeon
             break;
         default: // Input tidak valid
-            cout << "Invalid choice. Try again.\n";
+            cout << "Pilihan Invalid. Coba Lagi.\n";
             navigateDepth(currentDepth);
     }
 }
@@ -952,10 +952,10 @@ void loadGame() {
         }
         loadFile.close();
         loadWeapons(); // Load weapons including chosen weapon
-        cout << "Game loaded successfully!\n";
+        cout << "Game sukses di load!\n";
         idleGuild(); // Lanjutkan ke guild setelah memuat game
     } else {
-        cout << "No save game found. Starting a new game.\n";
+        cout << "Ga ada game yang di simpan. Starting a new game.\n";
         newGame(); // Mulai permainan baru jika file save tidak ditemukan
     }
 }
@@ -1046,14 +1046,14 @@ void saveGame() {
         saveFile << "\n";
         saveFile << "Currency: " << gold << "\n";
         saveFile.close();
-        cout << "Game saved successfully!\n"; // Debugging log
+        cout << "Game berhasil di save!\n"; // Debugging log
     } else {
         cout << "Error saving the game!\n"; // Debugging log
     }
 }
 
 void rest() {
-    cout << "You rest and save the game. Your health is fully restored.\n";
+    cout << "You rest and save the game. Darahmu kembali penuh.\n";
     increaseHealth(100);
     saveGame();
     guild();
@@ -1070,14 +1070,14 @@ void sellItems() {
         cout << i + 1 << ". " << playerInventory[i].name 
              << " - " << itemPrice << " gold\n";
     }
-    cout << "Enter the number to sell an item or 0 to exit: ";
+    cout << "Pilih pake angka untuk beli, atau 0 buat kembali: ";
     int choice;
     cin >> choice;
 
     if (choice > 0 && choice <= playerInventorySize) {
         int itemPrice = playerInventory[choice - 1].price > 0 ? playerInventory[choice - 1].price : 0;
-        cout << "You sold " << playerInventory[choice - 1].name 
-             << " for " << itemPrice << " gold.\n";
+        cout << "kamu jual " << playerInventory[choice - 1].name 
+             << " untuk " << itemPrice << " gold.\n";
         gold += itemPrice;
 
         // Remove item by shifting array
@@ -1097,20 +1097,20 @@ void travellingMerchant() {
         cout << i + 1 << ". " << merchantItems[i].name;
 
         if (ownsWeapon(merchantItems[i].name)) {
-            cout << " (Already owned)";
+            cout << " (Udah ada)";
         } else {
             cout << " (" << merchantItems[i].price << " gold)";
         }
 
         cout << "\n";
     }
-    cout << "Enter the number to buy an item or 0 to exit: ";
+    cout << "Pilih pake angka untuk beli, atau 0 buat kembali: ";
     int choice;
     cin >> choice;
 
     if (choice > 0 && choice <= merchantItemsSize) {
         if (ownsWeapon(merchantItems[choice - 1].name)) {
-            cout << "You already own this weapon.\n";
+            cout << "Dirimu Udah Punya senjatanya!.\n";
         } else if (gold >= merchantItems[choice - 1].price) {
             gold -= merchantItems[choice - 1].price;
             cout << "You bought " << merchantItems[choice - 1].name << ".\n";
@@ -1120,10 +1120,10 @@ void travellingMerchant() {
                 weaponList[weaponListSize++] = {merchantItems[choice - 1].name, merchantItems[choice - 1].price};
                 saveWeapons(); // Simpan senjata ke file
             } else {
-                cout << "Your weapon inventory is full!\n";
+                cout << "Inventory Penuh!\n";
             }
         } else {
-            cout << "Not enough gold!\n";
+            cout << "Ga cukup duitnya\n";
         }
     }
     camp();
