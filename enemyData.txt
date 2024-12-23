@@ -35,6 +35,6 @@ Strength: 18
 
 
 /// Boss ///
-EnemyName: Lymanien - Drakeborn
+EnemyName: Guardian Golem
 Health: 150
 Strength: 15

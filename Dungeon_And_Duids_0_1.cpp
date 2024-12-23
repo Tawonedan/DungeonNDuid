@@ -428,6 +428,21 @@ void navigateDepth(int depth) {
 
     if (depth > maxDepth) {
         cout << "Kamu merasakan musuh kuat didekat sini... Bersiaplah untuk pertarungan yang sengit.\n";
+
+    cout << "Input Pilihan: ";
+                
+    int Choice;
+    cin >> Choice;
+
+    if (Choice < 6) {
+        cout << "Kamu menemukan musuh yang kuat! Pertarungan tak terhindarkan!\n";
+        string EnemyName = "Guardian Golem";
+        loadEnemyData(EnemyName);
+        battle(playerName, EnemyName);
+    } else {
+        handleSpecialEvent();
+    }
+
         return;
     }
 
