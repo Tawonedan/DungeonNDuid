@@ -222,9 +222,9 @@ void saveWeapons() {
             file << "ChosenWeapon," << chosenWeapon << "\n";
         }
         file.close();
-        cout << "Weapons saved successfully!\n"; // Debugging log
+        cout << "Senjata berhasil disimpan!\n"; // Debugging log
     } else {
-        cout << "Error saving weapons!\n"; // Debugging log
+        cout << "Error menyimpan senjata!\n"; // Debugging log
     }
 
 }
@@ -256,42 +256,42 @@ void increaseHealth(int healAmount) {
 
 void displayDungeonMenu() {
     cout << "====================================\n";
-    cout << "|          Dungeon Options         |\n";
+    cout << "|           Opsi Dungeon           |\n";
     cout << "====================================\n";
-    cout << "|1. Go deeper into the dungeon.    |\n"; 
-    cout << "|2. Check around for resources.    |\n";
-    cout << "|3. Return to the previous depth.  |\n";
+    cout << "|1. Masuk lebih dalam.             |\n"; 
+    cout << "|2. Cek sekeliling.                |\n";
+    cout << "|3. Kembali.  |\n";
     if (currentDepth % 4 == 0 && currentDepth != 0) {
-        cout << "|4. Rest.                          |\n";
+        cout << "|4. Istirahat.                          |\n";
     }
     cout << "====================================\n\n";
-    cout << "Enter your choice: ";
+    cout << "Masukkan pilihan: ";
 }
 
 void displayChest() {
     cout << "====================================\n";
-    cout << "|         You found a chest!       |\n";
+    cout << "|       Kamu menemukan peti!       |\n";
     cout << "====================================\n";
-    cout << "|What would you like to do?        |\n";
-    cout << "|1. Open the chest.                |\n";
-    cout << "|2. Leave it alone.                |\n";
+    cout << "|Apa yang kamu lakukan?            |\n";
+    cout << "|1. Buka peti.                     |\n";
+    cout << "|2. Tinggalkan.                    |\n";
     cout << "====================================\n\n";
-    cout << "Enter your choice: ";
+    cout << "Masukkan pilihan: ";
 }
 
 void displayChestResult(bool foundTreasure, const Item& treasure) {
     if (foundTreasure) {
         cout << "====================================\n";
-        cout << "|        You opened the chest!     |\n";
+        cout << "|       Kamu membuka petinya!      |\n";
         cout << "====================================\n";
-        cout << "You found a " << treasure.name << " worth " 
+        cout << "Kamu menemukan " << treasure.name << " seharga " 
              << treasure.value << " gold!\n";
         cout << "====================================\n\n";
     } else {
         cout << "=========================================\n";
-        cout << "|          It's a trap!                 |\n";
+        cout << "|            Isinya jebakan!            |\n";
         cout << "=========================================\n";
-        cout << "The chest was a mimic! Prepare to fight!\n";
+        cout << "Rupanya Mimic! Bersiap untuk bertarung! \n";
         cout << "=========================================\n\n";
     }
 }
@@ -300,7 +300,7 @@ void addItemToInventory(const Item& newItem) {
     if (playerInventorySize < MAX_INVENTORY_SIZE) {
         playerInventory[playerInventorySize++] = {newItem.name, newItem.value};
     } else {
-        cout << "Inventory is full!\n";
+        cout << "Inventory penuh!\n";
     }
 }
 
@@ -323,7 +323,7 @@ void handleChest() {
             battle(playerName, EnemyName);
         }
     } else {
-        cout << "You leave the chest behind.\n";
+        cout << "Kamu memilih untuk meninggalkan peti itu.\n";
     }
 }
 
@@ -333,35 +333,35 @@ void handleSpecialEvent() {
 
     if (eventRoll <= 25) { // Event Kolam
         cout << "====================================\n";
-        cout << "    You found a mysterious pool!   |\n";
+        cout << "  Kamu menemukan kolam misteriusl! |\n";
         cout << "====================================\n";
-        cout << "Would you like to enter the pool?  |\n";
-        cout << "1. Yes 2. No                       |\n";
+        cout << "Akankah kamu masuk ke kolam itu?   |\n";
+        cout << "[1]Ya [2]Tidak                     |\n";
         cout << "====================================\n";
-        cout << "Enter your choice: ";
+        cout << "Masukkan pilihan: ";
         int choice;
         cin >> choice;
 
         if (choice == 1) {
             if (randomRange(0, 1) == 0) {
-                cout << "The pool is sacred! Your health is fully restored.\n";
+                cout << "Kolam itu suci! Kamu memulihkan kesehatanmu.\n";
                 playerHealth = 100;
             } else {
-                cout << "The pool is poisonous! You lose 50% of your health.\n";
+                cout << "Kolam itu beracun! Kamu kehilangan setengah kesehatanmu.\n";
                 playerHealth = max(playerHealth / 2, 1);
             }
         } else {
-            cout << "You decide to avoid the pool and move on.\n";
+            cout << "Kamu memutuskan untuk meninggalkan kolam itu dan lanjut.\n";
         }
     } else if (eventRoll <= 50) { // Event Badut
         cout << "===================================================\n";
-        cout << "|            You encounter a clown!               |\n";
+        cout << "|           Kamu bertemu seorang badut!           |\n";
         cout << "===================================================\n";
-        cout << "The clown offers a mysterious deal for 30 gold.   |\n";
-        cout << "Would you like to accept?                         |\n"; 
-        cout << "1. Yes 2. No                                      |\n";
+        cout << "Badut itu menawarimu tawaran seharga 30 gold...   |\n";
+        cout << "Terima tawaran abu abu itu?                       |\n"; 
+        cout << "[1]Yes [2]No                                      |\n";
         cout << "===================================================";
-        cout << "Enter your choice: ";
+        cout << "Masukkan Pilihan: ";
         int choice;
         cin >> choice;
 
@@ -369,26 +369,26 @@ void handleSpecialEvent() {
             if (gold >= 30) {
                 gold -= 30;
                 if (randomRange(0, 1) == 0) {
-                    cout << "The clown gives you 50 gold in return!\n";
+                    cout << "Badut itu memberimu 50 gold kembali!\n";
                     gold += 50;
                 } else {
-                    cout << "The clown disappears without a trace!\n";
+                    cout << "Badut itu hilang tanpa jejak!\n";
                 }
             } else {
-                cout << "You don't have enough gold! The clown laughs and leaves.\n";
+                cout << "Kamu tidak punya cukup gold! Badut itu menertawakanmu dan pergi.\n";
             }
         } else {
-            cout << "You decline the clown's offer and move on.\n";
+            cout << "Kamu menolak tawaran badut itu dan pergi.\n";
         }
     } else if (eventRoll <= 75) { // Event Mayat
         cout << "====================================\n";
-        cout << "|    You find a pile of corpses.   |\n";
+        cout << "|  Kamu menemukan tumpukan mayat.  |\n";
         cout << "====================================\n";
-        cout << "|What would you like to do?        |\n";
-        cout << "|1. Interact/Search.               |\n";
-        cout << "|2. Leave it alone.                |\n";
+        cout << "|Apa yang akan kamu lakukan?       |\n";
+        cout << "|1. Interaksi/Cari.                |\n";
+        cout << "|2. Tinggalkan.                    |\n";
         cout << "====================================\n";
-        cout << "Enter your choice: ";
+        cout << "Masukkan Pilihan: ";
         int choice;
         cin >> choice;
 
@@ -399,21 +399,21 @@ void handleSpecialEvent() {
                 cout << "You found " << foundGold << " gold!\n";
                 gold += foundGold;
             } else {
-                cout << "One of the corpses reanimates as a zombie! Prepare to fight!\n";
+                cout << "Salah satu mayat itu bangkit kembali! Bersiap untuk bertarung!\n";
                 string EnemyName = "Zombie";
                 loadEnemyData(EnemyName);
                 battle(playerName, EnemyName);
             }
         } else {
-            cout << "You decide to leave the corpses alone and move on.\n";
+            cout << "Kamu meninggalkan tumpukan mayat itu dan pergi.\n";
         }
     } else { // Event Adventurer
         cout << "=====================================\n";
-        cout << "| You encounter a fellow adventurer! |\n";
+        cout << "| Kamu bertemu sesama petualang! |\n";
         cout << "=====================================\n";
-        cout << "They offer you a potion. You restore 20 health points.\n";
+        cout << "Ia menawarimu potion. Kamu menerima 20 poin kesehatan.\n";
         playerHealth = min(playerHealth + 20, 100);
-        cout << "Your current health: " << playerHealth << "\n";
+        cout << "Darahmu saat ini: " << playerHealth << "\n";
     }
 }
 
@@ -421,23 +421,23 @@ void handleSpecialEvent() {
 void navigateDepth(int depth) {
 
     if (depth < 1) {
-        cout << "You are at the entrance. Returning to camp.\n";
+        cout << "Kamu berada di pintu masuk. Kembali ke camp.\n";
         camp();
         return;
     }
 
     if (depth > maxDepth) {
-        cout << "You have reached the maximum depth! Prepare for the final challenge!\n";
+        cout << "Kamu merasakan musuh kuat didekat sini... Bersiaplah untuk pertarungan yang sengit.\n";
         return;
     }
 
     currentDepth = depth;
     hasCheckedAround = false;
-    cout << "Current Depth: " << currentDepth << "\n";
+    cout << "Kedalaman: " << currentDepth << "\n";
 
     // Cek apakah lantai adalah checkpoint (kelipatan 4)
     if (currentDepth % 4 == 0) {
-        cout << "You found a checkpoint! You can rest here.\n";
+        cout << "Kamu menemukan checkpoint! Kamu bisa istirahat disini.\n";
         dungeon();
         return;
     }
@@ -445,14 +445,14 @@ void navigateDepth(int depth) {
     // Event probabilitas: 60% musuh, 20% peti, 20% spesial
     int event = randomRange(0, 9);
     if (event < 6) {
-        cout << "You encounter an enemy!\n";
+        cout << "Kamu bertemu musuh!\n";
 
 
         string EnemyName = generateCommonEnemy();
         loadEnemyData(EnemyName);
         battle(playerName, EnemyName);
     } else if (event < 8) {
-        cout << "You find a chest!\n";
+        cout << "Kamu menemukan peti!\n";
         handleChest();
     } else {
         handleSpecialEvent();
@@ -466,7 +466,7 @@ void navigateDepth(int depth) {
 
 void checkAround() {
     if (hasCheckedAround) {
-        cout << "You have already checked around at this depth. Try something else.\n";
+        cout << "Kamu telah mengecek sekitar.\n";
         dungeon();
         return;
     }
@@ -474,13 +474,13 @@ void checkAround() {
     hasCheckedAround = true;
     int event = randomRange(0, 9); // 80% no result, 20% find chest
     if (event < 8) {
-        cout << "You searched around but found nothing of value.\n";
+        cout << "Kamu tetap tidak menemukan apapun.\n";
     } else {
-        cout << "You found a chest!\n";
+        cout << "kamu menemukan peti!\n";
         handleChest();
     }
 
-    cout << "You remain at depth " << currentDepth << ".\n";
+    cout << "Kamu tetap berada pada kedalaman " << currentDepth << ".\n";
     dungeon();
 }
 
@@ -489,7 +489,7 @@ void displayInventory() {
     if (count == 0) {
         cout << "\nInventory kosong!" << endl;
     } else {
-        cout << "\nInventory items:" << endl;
+        cout << "\nInventory:" << endl;
         for (int i = 0; i < count; i++) {
             cout << i + 1 << ". " << items[i] << endl;
         }
@@ -620,16 +620,16 @@ void damageStr(const string& weaponName, int& enemyHealth) {
             currentEnemy.health -= damage;
 
             // Tampilkan hasil serangan
-            cout << "You attacked the enemy with " << weaponName 
-                 << " and dealt " << damage << " damage!\n";
-            cout << "Enemy health is now: " << max(enemyHealth, 0) << "\n";
+            cout << "Kamu menyerang musuh dengan " << weaponName 
+                 << " dan memberikan " << damage << " damage!\n";
+            cout << "Darah musuh saat ini: " << max(enemyHealth, 0) << "\n";
 
             return;
         }
     }
 
     // Jika senjata tidak ditemukan
-    cout << "Weapon not found! No damage dealt.\n";
+    cout << "Kamu tidak memegang senjata! Kamu tidak memberikan damage.\n";
 }
 
 
@@ -641,24 +641,24 @@ void playerAttack() {
 
 void enemyAttack() {
     playerHealth -= currentEnemy.strength;
-    cout << "The " << currentEnemy.name << " dealt " << currentEnemy.strength << " damage to you.\n";
+    cout << currentEnemy.name << " Menyerangmu sebesar " << currentEnemy.strength << " damage kepadamu.\n";
 }
 
 void useBlazingBuster() {
     currentEnemy.health -= 30;
-    cout << "You dealt 30 damage to the " << currentEnemy.name << " by using Blazing Buster" <<".\n";
+    cout << "Kamu memberikan 30 damage kepada" << currentEnemy.name << " dengan Blazing Buster" <<".\n";
 }
 
 void useRevitalize() {
     increaseHealth(50);
-    cout << "You heal 50 health by using Revitalize"<< ".\n";
+    cout << "Kamu mengembalikan 50 darahmu dengan Revitalize"<< ".\n";
 }
 
 void playerSkill() {
     cout << "\n=======================================\n";
     cout << "|[1] Blazing Buster | [2] Revitalize  |\n";
     cout << "=======================================\n";
-    cout << "Enter your choice: ";
+    cout << "Input Pilihan: ";
                 
     int skillChoice;
     cin >> skillChoice;
@@ -672,7 +672,7 @@ void playerSkill() {
     break;
 
     default:
-    cout << "\nInvalid skill choice.\n";
+    cout << "\nPilihan Invalid.\n";
     }
 }
 
@@ -680,12 +680,12 @@ void playerDefend() {
     int blockRate = randomRange(1, 4);
 
     int blockedPercentage = blockRate * 25;
-    cout << "You choose to defend and blocked " << blockedPercentage << "% of the damage!\n";
+    cout << "Kamu memilih untuk berlindung dan menangkis " << blockedPercentage << "% of the damage!\n";
     int incomingDamage = currentEnemy.strength;
     int blockedDamage = incomingDamage * (blockedPercentage / 100.0);
     int damageTaken = incomingDamage - blockedDamage;
     playerHealth -= damageTaken;
-    cout << "You took " << damageTaken << " damage after blocking.\n";
+    cout << "Kamu menerima " << damageTaken << " Setelah menangkis.\n";
 
 }
 
@@ -706,7 +706,7 @@ string useItems() {
         }
 
         int itemChoice;
-        cout << "\nEnter the number of the item you want to remove (or 0 to exit): ";
+        cout << "\n[0]Keluar\n \nInput pilihan item: ";
         cin >> itemChoice;
 
         if (itemChoice < 1 || itemChoice > count) {
@@ -719,7 +719,7 @@ string useItems() {
         }
 
         if (itemChoice > 0 && itemChoice <= count) {
-            cout << "You selected: " << items[itemChoice - 1] << endl;
+            cout << "Kamu memilih: " << items[itemChoice - 1] << endl;
         } else {
             cout << "Invalid selection!" << endl;
         }
@@ -731,23 +731,18 @@ string useItems() {
 
     }
 
-    cout << "\nUpdated inventory:" << endl;
-    for (int i = 0; i < count; i++) {
-        cout << i + 1 << ". " << items[i] << endl;
-    }
-
     if (usedItem == "Potion") {
         increaseHealth(30);
-        cout << "You use a Potion to heal.\n";
+        cout << "Kamu menggunakan Potion.\n";
     }
     
 }
 
 void displayBattleHeader(const string& playerName, const string& enemyName) {
     cout << "\n====================================\n";
-    cout << "|          Battle Begins!          |\n";
-    cout << "====================================\n";
-    cout << playerName << " faces off against " << enemyName << "!\n";
+    cout << "|         Pertarungan mulai!         |\n";
+    cout << "======================================\n";
+    cout << playerName << " bertarung dengan " << enemyName << "!\n";
     cout << "====================================\n";
 }
 
@@ -755,21 +750,21 @@ void displayBattleStatus(int playerHP, int enemyHP, const string& enemyName) {
     cout << "\n====================================\n";
     cout << "|            Battle Status         |\n";
     cout << "====================================\n";
-    cout << "| Player HP: " << playerHP << "                   \n";
+    cout << "| HP-mu: " << playerHP << "                   \n";
     cout << "| " << enemyName << " HP: " << enemyHP << "        \n";
     cout << "====================================\n";
 }
 
 void displayBattleMenu() {
     cout << "\n===============================================================\n";
-    cout << "|[1] Attack | [2] Defend | [3] Skill | [4] Items | [5] Escape |\n";
-    cout << "===============================================================\n";
-    cout << "Enter your choice: ";
+    cout << "|[1] Serang | [2] Berlindung | [3] Skill | [4] Item | [5] Kabur |\n";
+    cout << "=================================================================\n";
+    cout << "Input pilihan: ";
 }
 
 void displayGameOver(){
     cout << "\n===============================================================\n";
-    cout << "|          Game Over! Returning to title screen.....          |\n";
+    cout << "|          Game Over! Kembali ke title screen.....          |\n";
     cout << "===============================================================\n";
 }
 
@@ -799,26 +794,26 @@ void battle(const string& playerName, const string& enemyName) {
                 break;
             }
             case 3: {
-                cout << "You choose to use skill\n";
+                cout << "Kamu menggunakan skill\n";
                 playerSkill();
                 enemyAttack();
                 break;
             }
             case 4: {
-                cout << "You Used item\n";
+                cout << "Kamu menggunakan Item\n";
                 useItems();
                 break;
             }
             case 5: {
-                cout << "You choose to escape\n";
+                cout << "Kamu mencoba kabur...\n";
 
                 int escapeChance = randomRange(0, 5);
 
                 if (escapeChance == 1) {
-                    cout << "You managed to escape\n";
+                    cout << "Kamu berhasil kabur\n";
                     battleOngoing = false;
                 } else {
-                    cout << "You failed to escape\n";
+                    cout << "Percobaan kabur gagal..\n";
                     enemyAttack();
                 }
                              
@@ -830,12 +825,12 @@ void battle(const string& playerName, const string& enemyName) {
         }
 
         if (playerHealth > 0 && currentEnemy.health <= 0) {
-            cout << "\nYou have defeated the enemy!.\n";
+            cout << "\nKamu berhasil mengalahkan " << enemyName << "!.\n";
             battleOngoing = false;
         }
 
         if (playerHealth <= 0) {
-            cout << "\nYou are defeated by the enemy.....\n";
+            cout << "\nDikalahkan oleh " << enemyName << "..\n";
             battleOngoing = false;
             displayGameOver();
 
@@ -867,10 +862,10 @@ void dungeon() {
             break;
         case 4: // Rest 
             if (currentDepth % 4 == 0 && currentDepth != 0) {
-                cout << "Kamu beristirahat dan recover health.\n";
+                cout << "Kamu beristirahat dan memulihkan tenagamu.\n";
                 increaseHealth(50); // Pulihkan 50 HP
             } else {
-                cout << "Pilihan Invalid. Kembali ke dungeon menu.\n";
+                cout << "Pilihan Invalid. Kembali ke menu dungeon.\n";
             }
             dungeon(); // Kembali ke menu dungeon
             break;
@@ -955,7 +950,7 @@ void loadGame() {
         cout << "Game sukses di load!\n";
         idleGuild(); // Lanjutkan ke guild setelah memuat game
     } else {
-        cout << "Ga ada game yang di simpan. Starting a new game.\n";
+        cout << "Ga ada game yang di simpan. Memulai petualangan baru.\n";
         newGame(); // Mulai permainan baru jika file save tidak ditemukan
     }
 }
@@ -976,9 +971,9 @@ void exitGame() {
 
 void prologue() {
     cout << "==================================================\n";
-    cout << "|                    Prologue                   |\n";
+    cout << "|                    Prologue                    |\n";
     cout << "==================================================\n";
-    cout << "| Di dunia Duid, sebuah tanah penuh reruntuhan   |\n";
+    cout << "| Di ohiolandia, sebuah tanah penuh reruntuhan   |\n";
     cout << "| kuno dan ruang bawah tanah mematikan, kisah    |\n";
     cout << "| tentang kekayaan dan bahaya bergema di seluruh |\n";
     cout << "| guild.                                         |\n";
@@ -987,14 +982,14 @@ void prologue() {
     cout << "| Adventurers' Guild dengan semangat membara.    |\n";
     cout << "| Hari ini, perjalanan Anda dimulai. Apakah Anda |\n";
     cout << "| akan mencapai kejayaan, atau menjadi jiwa yang |\n";
-    cout << "| terlupakan di kegelapan?                       |\n";
+    cout << "| terlupakan dalam kegelapan Dungeon?            |\n";
     cout << "==================================================\n";
 }
 
 void inputName() {
     cout << "Masukkan nama: ";
     cin >> playerName;
-    cout << "Welkam, " << playerName << "!\n";
+    cout << "Selamat datang di guild, " << playerName << "!\n";
 }
 
 void idleGuild() {
@@ -1028,7 +1023,7 @@ void guild() {
             titleScreen();
             break;
         default:
-            cout << "Pilihan Salah. Balik to guild.\n";
+            cout << "Pilihan Salah. Kembali ke guild.\n";
             guild();
     }
 }
@@ -1053,7 +1048,7 @@ void saveGame() {
 }
 
 void rest() {
-    cout << "You rest and save the game. Darahmu kembali penuh.\n";
+    cout << "Kamu beristirahat sejenak. Kamu merasakan tubuhmu kembali bertenaga\n";
     increaseHealth(100);
     saveGame();
     guild();
@@ -1064,20 +1059,20 @@ void receptionist() {
 }
 
 void sellItems() {
-    cout << "=== Sell Items ===\n";
+    cout << "=== Jual Item ===\n";
     for (int i = 0; i < playerInventorySize; ++i) {
         int itemPrice = playerInventory[i].price > 0 ? playerInventory[i].price : 0;
         cout << i + 1 << ". " << playerInventory[i].name 
              << " - " << itemPrice << " gold\n";
     }
-    cout << "Pilih pake angka untuk beli, atau 0 buat kembali: ";
+    cout << "[0]Keluar\n\nPilih item yang dijual: ";
     int choice;
     cin >> choice;
 
     if (choice > 0 && choice <= playerInventorySize) {
         int itemPrice = playerInventory[choice - 1].price > 0 ? playerInventory[choice - 1].price : 0;
-        cout << "kamu jual " << playerInventory[choice - 1].name 
-             << " untuk " << itemPrice << " gold.\n";
+        cout << "kamu menjual " << playerInventory[choice - 1].name 
+             << " seharga " << itemPrice << " gold.\n";
         gold += itemPrice;
 
         // Remove item by shifting array
@@ -1097,14 +1092,14 @@ void travellingMerchant() {
         cout << i + 1 << ". " << merchantItems[i].name;
 
         if (ownsWeapon(merchantItems[i].name)) {
-            cout << " (Udah ada)";
+            cout << " (Sudah dimiliki)";
         } else {
             cout << " (" << merchantItems[i].price << " gold)";
         }
 
         cout << "\n";
     }
-    cout << "Pilih pake angka untuk beli, atau 0 buat kembali: ";
+    cout << "[0]Keluar\n\nPilih item yang dibeli: ";
     int choice;
     cin >> choice;
 
@@ -1113,7 +1108,7 @@ void travellingMerchant() {
             cout << "Dirimu Udah Punya senjatanya!.\n";
         } else if (gold >= merchantItems[choice - 1].price) {
             gold -= merchantItems[choice - 1].price;
-            cout << "You bought " << merchantItems[choice - 1].name << ".\n";
+            cout << "Kamu membeli " << merchantItems[choice - 1].name << ".\n";
 
             // Tambahkan ke weaponList
             if (weaponListSize < MAX_WEAPONS_SIZE) {
@@ -1123,7 +1118,7 @@ void travellingMerchant() {
                 cout << "Inventory Penuh!\n";
             }
         } else {
-            cout << "Ga cukup duitnya\n";
+            cout << "Gold tidak cukup!\n";
         }
     }
     camp();
@@ -1160,21 +1155,21 @@ void selectDungeon() {
 }
 
 void skibidiCastle() {
-    cout << "You enter the mysterious Skibidi Castle.\n";
+    cout << "Kamu pergi skibidi castle yang misterius.\n";
     maxDepth = 10;
     currentDepth = 0;
     camp();
 }
 
 void elMachoPrison() {
-    cout << "You step into the dark El Macho Prison.\n";
+    cout << "Kamu pergi El macho prison yang gelap.\n";
     maxDepth = 20;
     currentDepth = 0;
     camp();
 }
 
 void sigmaTempleRuin() {
-    cout << "You explore the ancient Sigma Temple Ruin.\n";
+    cout << "Kamu pergi ke sigma temple ruin yang kuno.\n";
     maxDepth = 30;
     currentDepth = 0;
     camp();
@@ -1185,11 +1180,14 @@ void camp() {
     cout << "==================================================\n";
     cout << "|                  Perkemahan                   |\n";
     cout << "==================================================\n";
-    cout << "| 1. Bonfire    (Simpan permainan)              |\n";
-    cout << "| 2. Interaksi Fellow Adventurer                |\n";
-    cout << "| 3. Masuk ke dungeon                           |\n";
-    cout << "| 4. Travelling Merchant (Beli senjata)         |\n";
-    cout << "| 5. Cek Inventory                              |\n";
+    cout << "| 1. Masuk ke dungeon                           |\n";
+    cout << "|                                               |\n";
+    cout << "| 2. Bonfire    (Simpan permainan)              |\n";
+    cout << "| 3. Cek Inventory                              |\n";
+    cout << "|                                               |\n";
+    cout << "| 4. Interaksi Fellow Adventurer                |\n";
+    cout << "| 5. Travelling Merchant (Beli senjata)         |\n";
+    cout << "|                                               |\n";
     cout << "| 6. Kembali ke Guild                           |\n";
     cout << "==================================================\n";
     cout << "Pilih: ";
@@ -1197,19 +1195,19 @@ void camp() {
 
     switch (choice) {
         case 1:
-            bonfire();
-            break;
-        case 2:
-            interactFellowAdventurer();
-            break;
-        case 3:
             enterDungeon();
             break;
+        case 2:
+            bonfire();
+            break;
+        case 3:
+            checkInventory();
+            break;
         case 4:
-            travellingMerchant();
+            interactFellowAdventurer();
             break;
         case 5:
-            checkInventory();
+            travellingMerchant();
             break;
         case 6:
             guild();
@@ -1221,7 +1219,7 @@ void camp() {
 }
 
 void bonfire() {
-    cout << "You save your game and feel refreshed by the warmth of the bonfire.\n";
+    cout << "Kamu menulis kisahmu sembari merasakan hangatnya api unggun [Menyimpan File].\n";
     increaseHealth(100);
     saveGame();
     camp();
@@ -1262,18 +1260,18 @@ void checkInventory() {
         cout << i + 1 << ". " << weaponList[i].name << " (Damage: " << weaponList[i].damage << ")";
         if (weaponList[i].name == chosenWeapon) {
             // currentWeaponDamage = weaponListSize[i].damage;
-            cout << " [Chosen]";
+            cout << " [Dipilih]";
         }
         cout << "\n";
     }
 
-    cout << "\nChoose a weapon to equip (0 to cancel): ";
+    cout << "\n[0]Keluar\n\nPilih item yang dijual: ";
     int choice;
     cin >> choice;
 
     if (choice > 0 && choice <= weaponListSize) {
         chosenWeapon = weaponList[choice - 1].name;
-        cout << "You have chosen " << chosenWeapon << ".\n";
+        cout << "Kamu memilih: " << chosenWeapon << ".\n";
         saveWeapons(); // Simpan senjata yang dipilih
     }
     camp();
