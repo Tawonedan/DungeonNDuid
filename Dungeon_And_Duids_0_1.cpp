@@ -1228,8 +1228,24 @@ void bonfire() {
 }
 
 void interactFellowAdventurer() {
-    cout << "Interaksi dengan adventurer lain sedang tidak tersedia.\n";
+    cout << "=== Interaksi dengan Fellow Adventurer ===\n";
+
+    if (maxDepth == 10) {
+        cout << "Seorang petualang berkata: 'Skibidi Castle benar-benar aneh, aku hampir kehilangan arah di sana!'\n";
+        cout << "Dia menawarkan beberapa tips: 'Jangan lupa periksa setiap sudut, terkadang ada harta karun.'\n";
+    } else if (maxDepth == 20) {
+        cout << "Seorang petualang berkata: 'El Macho Prison penuh jebakan, berhati-hatilah.'\n";
+        cout << "Dia memperingatkan: 'Musuh di dalam gelap sangat mematikan, bawa cukup senjata!'\n";
+    } else if (maxDepth == 30) {
+        cout << "Seorang petualang berkata: 'Sigma Temple Ruin penuh misteri dan teka-teki.'\n";
+        cout << "Dia berbagi: 'Aku pernah melihat harta karun yang dijaga golem, tapi belum cukup kuat untuk mengambilnya.'\n";
+    } else {
+        cout << "Seorang petualang berkata: 'Aku belum pernah sejauh ini, hati-hati ya.'\n";
+    }
+
+    camp();
 }
+
 
 void enterDungeon() {
     dungeon();
