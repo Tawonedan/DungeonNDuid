@@ -1280,7 +1280,7 @@ void checkInventory() {
         cout << "\n";
     }
 
-    cout << "\n[0]Keluar\n\nPilih item yang dijual: ";
+    cout << "\n[0]Keluar\n\nPilih senjata yang ingin di pakai atau 0 untuk kembali: ";
     int choice;
     cin >> choice;
 
