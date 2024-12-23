@@ -135,6 +135,7 @@ void checkInventory();
 void dungeon();
 void goDeeper();
 void checkAround();
+void startFinalBattle();
 void battle(const string& playerName, const string& enemyName);
 void handleChest();
 void handleSpecialEvent();
@@ -605,25 +606,22 @@ string generateCommonEnemy() {
 
 }
 
-void damageStr(const string& weaponName, int& enemyHealth) {
+void damageStr(const string& weaponName, int& targetHealth) {
     for (int i = 0; i < weaponListSize; ++i) {
         if (weaponList[i].name == weaponName) {
             int damage = weaponList[i].damage;
+            targetHealth -= damage;
+            if (targetHealth < 0) targetHealth = 0;
 
-
-            currentEnemy.health -= damage;
-
-
-            cout << "Kamu menyerang musuh dengan " << weaponName 
-                 << " dan memberikan " << damage << " damage!\n";
-            cout << "Darah musuh saat ini: " << max(enemyHealth, 0) << "\n";
+            wcout << L"\nYou attacked with " << weaponName.c_str() 
+                  << L" and dealt " << damage << L" damage!\n";
+            wcout << L"Target health is now: " << targetHealth << L".\n";
 
             return;
         }
     }
 
-
-    cout << "Kamu tidak memegang senjata! Kamu tidak memberikan damage.\n";
+    wcout << L"Weapon not found! No damage dealt.\n";
 }
 
 
@@ -840,7 +838,7 @@ void battle(const string& playerName, const string& enemyName) {
 void displayBossBattleStatus(int playerHP, int enemyHP, const string& enemyName) {
     _setmode(_fileno(stdout), _O_U16TEXT); 
     wcout << L"\n═════════════════════════════════════\n";
-    wcout << L"⚔️  Final Boss Battle Status  ⚔️\n";
+    wcout << L"⚔️       Status Final Boss        ⚔️\n";
     wcout << L"═════════════════════════════════════\n";
     wcout << L"🌟 Player HP: " << playerHP << L"                \n";
     wcout << L"👹 " << enemyName.c_str() << L" HP: " << enemyHP << L"          \n";
@@ -849,11 +847,11 @@ void displayBossBattleStatus(int playerHP, int enemyHP, const string& enemyName)
 void displayBossBattleMenu() {
     _setmode(_fileno(stdout), _O_U16TEXT); 
     wcout << L"\n═══════════════════════════════════════════════════════════════\n";
-    wcout << L"🔮 Choose Your Action:\n";
+    wcout << L"🔮 Pilih Aksi:\n";
     wcout << L"═══════════════════════════════════════════════════════════════\n";
-    wcout << L"⚔️ [1] Attack  🛡 [2] Defend  ✨ [3] Skill  💊 [4] Items  🚪 [5] Escape\n";
+    wcout << L"⚔️ [1] Serang  🛡 [2] Berlindung  ✨ [3] Skill  💊 [4] Item   \n";
     wcout << L"═══════════════════════════════════════════════════════════════\n";
-    wcout << L"Enter your choice: ";
+    wcout << L" Input Pilihan ";
 }
 void playerBossSkill() {
     _setmode(_fileno(stdout), _O_U16TEXT); 
@@ -969,20 +967,17 @@ void battleFinalBoss() {
         }
  
         if (bossHealth <= 0) {
-            wcout << L"\n══════════════════════════════════════════════════════════════════════════════\n";
-            wcout << L"          Anda Telah Mengalahkan Final Boss!!!! Kembali ke dungeon......    \n";
-            wcout << L"══════════════════════════════════════════════════════════════════════════════\n";
-            wcout << L"\n═══════════════════════════════════════\\n";
-            wcout << L"         Kamu Mendapatkan 100 gold    \n";
-            wcout << L"═══════════════════════════════════════\n";
-            gold += 100;
+            wcout << L"\n════════════════════════════════════════════════════════════════════════════════════════════════════════\n";
+            wcout << L"          Selamat Anda Mengalahkan Final Boss!! Terima Kasih Telah Memainkan Game ini......             \n";
+            wcout << L"════════════════════════════════════════════════════════════════════════════════════════════════════════\n";
             battleOngoing = false;
-            camp();
+            exit (0);
         } else if (playerHealth <= 0) {
-            wcout << L"\nAnda telah dikalahkan oleh " << bossName.c_str() << L"...\n";
+            wcout << L"\n════════════════════════════════════════════════════════════════════════════════════════════════════════\n";
+            wcout << L"          Kamu telah dikalahkan Lyanien Darkborn! Coba Lagi Dengan Equipment Yang Lebih Mumpuni         \n";
+            wcout << L"════════════════════════════════════════════════════════════════════════════════════════════════════════\n";
             battleOngoing = false;
-            displayGameOver();
-            titleScreen();
+            exit (0);
         }
     }
 }
