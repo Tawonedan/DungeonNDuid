@@ -6,7 +6,8 @@
 #include <cstdint>
 #include <cstring>
 #include <string>
-
+#include <io.h>
+#include <fcntl.h>
 using namespace std;
 
 ////////// Declare Struct ////////////
@@ -55,12 +56,11 @@ const Item itemList[] = {
 ////////// Array Declare ////////////
 
 
-////////// General Variable Declare ////////////
 const int MAX_INVENTORY_SIZE = 100;
 const int MAX_WEAPONS_SIZE = 50;
 const int MAX_MERCHANT_ITEMS = 10;
-const int MAX_SIZE = 10; // Batas maksimum data
-const int MAX_ITEMS = 100; // Batas maksimum data
+const int MAX_SIZE = 10; 
+const int MAX_ITEMS = 100; 
 const int numItems = sizeof(itemList) / sizeof(itemList[0]);
 
 int playerHealth = 100;
@@ -261,7 +261,7 @@ void displayDungeonMenu() {
     cout << "|2. Cek sekeliling.                |\n";
     cout << "|3. Kembali.                       |\n";
     if (currentDepth % 4 == 0 && currentDepth != 0) {
-        cout << "|4. Istirahat.                 |\n";
+        cout << "|4. Istirahat.                     |\n";
     }
     cout << "====================================\n\n";
     cout << "Masukkan pilihan: ";
@@ -359,7 +359,7 @@ void handleSpecialEvent() {
         cout << "Badut itu menawarimu tawaran seharga 30 gold...   |\n";
         cout << "Terima tawaran abu abu itu?                       |\n"; 
         cout << "[1]Yes [2]No                                      |\n";
-        cout << "===================================================";
+        cout << "===================================================\n";
         cout << "Masukkan Pilihan: ";
         int choice;
         cin >> choice;
@@ -420,31 +420,15 @@ void handleSpecialEvent() {
 void navigateDepth(int depth) {
 
     if (depth < 1) {
-        cout << "Kamu berada di pintu masuk. Kembali ke camp.\n";
+        cout << "You are at the entrance. Returning to camp.\n";
         camp();
         return;
     }
 
     if (depth > maxDepth) {
-        cout << "Kamu merasakan musuh kuat didekat sini... Bersiaplah untuk pertarungan yang sengit.\n";
-
-    cout << "Input Pilihan: ";
-                
-    int Choice;
-    cin >> Choice;
-
-    if (Choice < 6) {
-        cout << "Kamu menemukan musuh yang kuat! Pertarungan tak terhindarkan!\n";
-        string EnemyName = "Guardian Golem";
-        loadEnemyData(EnemyName);
-        battle(playerName, EnemyName);
-    } else {
-        handleSpecialEvent();
-    }
-
+        startFinalBattle();
         return;
     }
-
     currentDepth = depth;
     hasCheckedAround = false;
     cout << "Kedalaman: " << currentDepth << "\n";
@@ -749,7 +733,7 @@ string useItems() {
 }
 
 void displayBattleHeader(const string& playerName, const string& enemyName) {
-    cout << "\n====================================\n";
+    cout << "\n======================================\n";
     cout << "|         Pertarungan mulai!         |\n";
     cout << "======================================\n";
     cout << playerName << " bertarung dengan " << enemyName << "!\n";
@@ -774,7 +758,7 @@ void displayBattleMenu() {
 
 void displayGameOver(){
     cout << "\n===============================================================\n";
-    cout << "|          Game Over! Kembali ke title screen.....          |\n";
+    cout << "|          Game Over! Kembali ke title screen.....            |\n";
     cout << "===============================================================\n";
 }
 
@@ -852,9 +836,162 @@ void battle(const string& playerName, const string& enemyName) {
     }
 
 }
-////////////////////////////////// Battle Function /////////////////////////////////// 
 
+void displayBossBattleStatus(int playerHP, int enemyHP, const string& enemyName) {
+    _setmode(_fileno(stdout), _O_U16TEXT); 
+    wcout << L"\n═════════════════════════════════════\n";
+    wcout << L"⚔️  Final Boss Battle Status  ⚔️\n";
+    wcout << L"═════════════════════════════════════\n";
+    wcout << L"🌟 Player HP: " << playerHP << L"                \n";
+    wcout << L"👹 " << enemyName.c_str() << L" HP: " << enemyHP << L"          \n";
+    wcout << L"═════════════════════════════════════\n";
+}
+void displayBossBattleMenu() {
+    _setmode(_fileno(stdout), _O_U16TEXT); 
+    wcout << L"\n═══════════════════════════════════════════════════════════════\n";
+    wcout << L"🔮 Choose Your Action:\n";
+    wcout << L"═══════════════════════════════════════════════════════════════\n";
+    wcout << L"⚔️ [1] Attack  🛡 [2] Defend  ✨ [3] Skill  💊 [4] Items  🚪 [5] Escape\n";
+    wcout << L"═══════════════════════════════════════════════════════════════\n";
+    wcout << L"Enter your choice: ";
+}
+void playerBossSkill() {
+    _setmode(_fileno(stdout), _O_U16TEXT); 
+    wcout << "\n=======================================\n";
+    wcout << "|[1] Blazing Buster | [2] Revitalize  |\n";
+    wcout << "=======================================\n";
+    wcout << "Input Pilihan: ";
+                
+    int skillChoice;
+    cin >> skillChoice;
 
+    switch (skillChoice) {
+    case 1:
+        useBlazingBuster();
+    break;
+    case 2:
+        useRevitalize();
+    break;
+
+    default:
+    cout << "\nPilihan Invalid.\n";
+    }
+}
+void battleFinalBoss() {
+    string bossName = "Lynanien Darkborn"; 
+    _setmode(_fileno(stdout), _O_U16TEXT);
+    int bossHealth = 250; 
+    int bossStrength = 20; 
+    int bossSkillDamage = 40; 
+    int bossSkillTurn = 3; 
+
+    battleOngoing = true;
+    int currentTurn = 0;
+
+    while (battleOngoing && playerHealth > 0 && bossHealth > 0) {
+        currentTurn++;
+        wcout << L"\n═══════════════════════════════════════════════\n";
+        wcout << L"                  Final Boss \n";
+        wcout << L"═══════════════════════════════════════════════\n";
+        wcout << L"| Anda menghadapi: " << bossName.c_str() << L" |\n";
+        wcout << L"⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n";
+        wcout << L"⣿⣿⢿⣿⣿⢿⣿⣿⢿⣿⣿⣿⣧⠘⢿⣿⣿⢿⣿⣿⢿⣿⣿⢿⣿⣿⢿⣿⣻⣿⣿⣻⣿⣿⣻⣿⣿⣻⣿⣿⣻⣿⣿⣻⣿⣿⣻⣿⣿⣻\n";
+        wcout << L"⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⡆⠠⢉⢻⣿⣿⣿⣿⢿⣛⣯⣿⣾⣿⣞⣷⣯⣟⣻⢿⣿⣿⡿⣿⣿⣿⢿⣿⣿⢿⣿⣿⢿⣿⣿⢿⣿\n";
+        wcout << L"⣿⣾⣿⣿⣾⣿⣿⣾⣿⣿⣻⠿⣿⣿⠀⠂⠄⡉⠑⢏⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣿⣟⣿⣶⣯⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n";
+        wcout << L"⣿⣿⣟⣿⣿⣟⣿⣿⣟⣿⣿⣷⡈⠿⣆⠡⠈⠄⣉⢸⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⣯⣿⣿⣿⣿⣿⣯⡿⣿⡽⢺⣿⣿⣯⣿⣿⣯⣿⣿⣯\n";
+        wcout << L"⣿⡿⣿⣿⡿⣿⣿⡿⣿⣿⣿⣿⣷⡀⠌⢁⠐⠠⠘⣷⣿⣿⢿⣽⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⣿⣿⣿⣿⣍⠒⢻⣿⣿⣿⣿⣟⣿⣿⣟⣿\n";
+        wcout << L"⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⣿⣷⡀⠉⠤⠁⢄⠈⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡀⠼⣿⣿⣿⣽⣿⣿⣿⣿⣿\n";
+        wcout << L"⣿⣿⣯⣿⣿⣯⣿⣿⣯⣿⣿⣿⣻⣿⣟⣳⢈⠰⢮⡀⠌⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⣼⣿⣿⣿⣿⣿⢿⣯⣿⣷\n";
+        wcout << L"⣿⣟⣿⣿⣟⣿⣿⣟⣿⣿⣿⣽⣿⢿⣽⣿⣿⣶⡄⣿⣾⣦⣿⣿⣟⣿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣾⣿⣿⣿⣾⣿⣿⣿⣿⣿\n";
+        wcout << L"⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⡿⣯⣿⣿⣻⣽⣷⡿⢿⣿⣿⣿⣿⣽⣿⢿⣹⣾⣟⣿⣿⣿⣿⣿⣿⣿⣿⢯⣟⣾⣿⣿⣽⣿⣿⡿⣟⣯⣷\n";
+        wcout << L"⣿⣿⢿⣾⣿⣿⣾⣿⣷⣟⣯⣟⣯⣷⣾⣷⡯⣞⡽⣿⣾⣿⣽⡇⠉⠒⠯⢳⡻⢾⣿⣿⣿⣿⣿⣿⣿⣻⣿⢯⣷⣿⣿⣿⣿⣻⣿⣿⣿⣿\n";
+        wcout << L"⣟⣿⣿⣿⣿⣻⣿⣯⣿⣿⣿⡿⣟⣽⣿⣿⣷⡯⣟⣼⣿⣽⣿⡽⣆⡅⣆⣦⣝⣻⣿⣿⣿⢟⡾⢋⣴⣿⡿⣯⣿⣾⣿⣿⣽⣿⣿⣿⢿⣟\n";
+        wcout << L"⣿⣿⣿⣿⣻⣿⣿⣿⣽⣫⣷⣽⢾⣿⣿⣿⣿⣿⡙⢾⣿⣿⠏⡔⠉⡈⢩⡿⣾⣟⣯⣟⡷⣞⣳⠞⣛⣾⣿⡷⣿⡷⣿⣿⣿⣿⣟⣿⣿⣿\n";
+        wcout << L"⡿⣟⣯⣿⣿⣿⣿⣻⣿⣿⡿⣯⣿⣿⣿⡿⠋⢠⣟⣿⣿⣿⠁⢈⠐⣄⡙⢿⣳⣿⢾⣽⣞⣿⠁⢤⣿⣻⣿⣽⣷⢿⣻⣿⣿⣾⣿⣿⣿⡿\n";
+        wcout << L"⣿⣿⣿⣿⣿⣿⣽⣿⣿⢯⡿⣷⣿⣿⣿⣶⣴⣿⣻⣿⣿⣽⠀⠀⢂⡈⣳⣮⣿⡽⣯⣿⡞⣣⡜⣮⢳⣿⣿⣎⣿⣿⡽⣿⣿⣿⢿⣟⣿⣿\n";
+        wcout << L"⣿⣿⡿⣿⣷⣿⣿⡿⣽⣿⣻⣿⣿⣿⣿⣿⢿⡱⣯⣿⣿⣷⠀⠀⠀⠘⢦⡙⠳⢿⣛⢶⣙⢧⡝⣮⢿⣿⣿⡲⣽⣿⡽⣿⣿⣿⣿⣿⣿⣿\n";
+        wcout << L"⣷⣿⣿⣿⣿⡿⢯⣽⣿⣳⡿⣿⣿⡿⠟⠋⠾⣱⢻⣿⣿⣿⡀⠀⠄⠀⠰⣅⠣⣄⠹⢮⡝⣮⡝⣮⢿⣿⣿⡵⣣⢿⣗⣿⣿⣿⣽⣿⡿⣷\n";
+        wcout << L"⣿⣿⣿⣿⣝⣿⣿⣿⣻⣿⣇⠘⢿⠀⠠⠐⠀⠀⠉⢉⠻⣿⣧⡀⠀⡈⠐⢨⡓⡜⢦⣍⠘⠁⠻⠹⣾⣿⣿⠞⣵⢫⣿⣿⣿⢿⣿⣿⣿⣿\n";
+        wcout << L"⡿⣿⣾⣳⣿⣿⢿⣾⣿⣿⡏⠠⢈⠐⡀⠆⡀⠀⠀⠂⠀⠄⠙⢿⣷⣶⣌⢡⣟⢬⡳⢬⠓⣦⠀⢼⡋⢿⣿⡆⠈⢷⡹⣿⣿⣿⣿⣷⣿⣿\n";
+        wcout << L"⡿⣟⣼⣿⣿⣻⣿⣿⣿⡍⠿⢂⠁⢂⠐⡀⠀⠐⠀⠀⢈⠐⠠⢸⢻⣿⣿⢧⣋⣄⢻⡎⢋⠐⠩⣀⢳⢦⡹⢷⣄⡸⣷⡹⣿⣿⣯⣿⣿⡿\n";
+        wcout << L"⢫⣿⣿⣿⣳⣿⣿⣿⣿⣷⡈⢄⠂⠄⠂⠐⠠⠀⠀⠀⠀⠀⠐⣸⣤⢿⣿⢯⣟⣞⡾⣽⣤⣟⣦⣌⠳⣮⣟⣿⣼⣻⣷⣛⣶⢇⣛⠻⣿⣿\n";
+        wcout << L"⣿⣿⢟⣾⣿⣿⣿⣿⣿⣿⣧⠀⠊⠀⠀⡀⠀⢀⠀⠀⠀⠀⣲⣷⢯⣿⣯⠟⠮⣽⢻⡟⣿⢾⣱⠾⣿⣻⣞⡷⣻⡷⣯⡟⣧⠟⠀⠀⠀⠙ \n";
+        wcout << L"⣿⣽⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠄⠀⠀⠀⠀⡀⠀⠀⢰⣯⡿⣿⣳⠃⠀⠀⠀⠀⠈⠄⠙⠪⢿⡱⢏⡻⡵⣱⢟⣣⠝⡀⠀⠀⠀⠀⠀  \n";
+        wcout << L"═══════════════════════════════════════════════\n";
+
+        displayBossBattleStatus(playerHealth, bossHealth, bossName);
+        displayBossBattleMenu();
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1: 
+                if (!chosenWeapon.empty()) {
+                    damageStr(chosenWeapon, bossHealth);
+                } else {
+                    cout << "No weapon equipped! You deal no damage.\n";
+                }
+                break;
+            case 2: 
+                playerDefend();
+                break;
+            case 3: 
+                playerBossSkill();
+                break;
+            case 4: 
+                useItems();
+                break;
+            case 5: { 
+                int escapeChance = randomRange(0, 5);
+                if (escapeChance == 1) {
+                    cout << "You managed to escape\n";
+                    battleOngoing = false;
+                    return;
+                } else {
+                    cout << "You failed to escape\n";
+                }
+                break;
+            }
+            default:
+                cout << "Invalid choice.\n";
+        }
+
+        if (bossHealth > 0) {
+            if (currentTurn % bossSkillTurn == 0) {
+                playerHealth -= bossSkillDamage;
+                wcout << L"\n" << bossName.c_str() << L" menggunakan skill mematikan dan memberikan "
+                      << bossSkillDamage << L" damage!\n";
+            } else {
+                playerHealth -= bossStrength;
+                wcout << L"\n" << bossName.c_str() << L" menyerang Anda dan memberikan "
+                      << bossStrength << L" damage!\n";
+            }
+        }
+ 
+        if (bossHealth <= 0) {
+            wcout << L"\n══════════════════════════════════════════════════════════════════════════════\n";
+            wcout << L"          Anda Telah Mengalahkan Final Boss!!!! Kembali ke dungeon......    \n";
+            wcout << L"══════════════════════════════════════════════════════════════════════════════\n";
+            wcout << L"\n═══════════════════════════════════════\\n";
+            wcout << L"         Kamu Mendapatkan 100 gold    \n";
+            wcout << L"═══════════════════════════════════════\n";
+            gold += 100;
+            battleOngoing = false;
+            camp();
+        } else if (playerHealth <= 0) {
+            wcout << L"\nAnda telah dikalahkan oleh " << bossName.c_str() << L"...\n";
+            battleOngoing = false;
+            displayGameOver();
+            titleScreen();
+        }
+    }
+}
+void startFinalBattle() {
+    cout << "Prepare yourself for the ultimate challenge!\n";
+    battleFinalBoss();
+}
+
+bool hasRestedAtCheckpoint = false;
 void dungeon() {
     int choice;
     displayDungeonMenu();
@@ -862,6 +999,7 @@ void dungeon() {
 
     switch (choice) {
         case 1: 
+            hasRestedAtCheckpoint = false; 
             navigateDepth(currentDepth + 1);
             break;
         case 2:
@@ -870,20 +1008,26 @@ void dungeon() {
         case 3: 
             navigateDepth(currentDepth - 1);
             break;
-        case 4:  
+        case 4: 
             if (currentDepth % 4 == 0 && currentDepth != 0) {
-                cout << "Kamu beristirahat dan memulihkan tenagamu.\n";
-                increaseHealth(50);
+                if (!hasRestedAtCheckpoint) {
+                    cout << "Kamu beristirahat dan recover health.\n";
+                    increaseHealth(50); 
+                    hasRestedAtCheckpoint = true; 
+                } else {
+                    cout << "Kamu sudah beristirahat di checkpoint ini!\n";
+                }
             } else {
-                cout << "Pilihan Invalid. Kembali ke menu dungeon.\n";
+                cout << "Pilihan Invalid. Kembali ke dungeon menu.\n";
             }
-            dungeon();
+            dungeon(); 
             break;
-        default:
+        default: 
             cout << "Pilihan Invalid. Coba Lagi.\n";
             navigateDepth(currentDepth);
     }
 }
+
 
 
 int main() {
@@ -934,23 +1078,6 @@ void loadGame() {
                 playerHealth = stoi(line.substr(8));
             } else if (line.find("Inventory:") == 0) {
                 inventoryLine = line.substr(11);
-                // size_t pos = 0;
-                // while ((pos = inventoryLine.find(";")) != string::npos) {
-                //     string item = inventoryLine.substr(0, pos);
-                //     size_t commaPos = item.find(",");
-                //     playerInventory[playerInventorySize++] = {
-                //         item.substr(0, commaPos), 
-                //         stoi(item.substr(commaPos + 1))
-                //     };
-                //     inventoryLine.erase(0, pos + 1);
-                // }
-                // if (!inventoryLine.empty()) {
-                //     size_t commaPos = inventoryLine.find(",");
-                //     playerInventory[playerInventorySize++] = {
-                //         inventoryLine.substr(0, commaPos), 
-                //         stoi(inventoryLine.substr(commaPos + 1))
-                //     };
-                // }
             } else if (line.find("Currency:") == 0) {
                 gold = stoi(line.substr(10));
             }
@@ -1069,75 +1196,87 @@ void receptionist() {
 }
 
 void sellItems() {
-    cout << "=== Jual Item ===\n";
-    for (int i = 0; i < playerInventorySize; ++i) {
-        int itemPrice = playerInventory[i].price > 0 ? playerInventory[i].price : 0;
-        cout << i + 1 << ". " << playerInventory[i].name 
-             << " - " << itemPrice << " gold\n";
+    cout << "\n========================================\n";
+    cout << "            Pedagang Sibuk           \n";
+    cout << "========================================\n";
+    if (playerInventorySize == 0) {
+        cout << "Inventaris Anda kosong. Tidak ada item untuk dijual.\n";
+    } else {
+        cout << "Daftar Item di Inventaris Anda:\n";
+        for (int i = 0; i < playerInventorySize; ++i) {
+            int itemPrice = playerInventory[i].price > 0 ? playerInventory[i].price : 0;
+            cout << i + 1 << ". " << playerInventory[i].name 
+                 << " - " << itemPrice << " gold\n";
+        }
+        cout << "0. Kembali ke menu sebelumnya.\n";
     }
-    cout << "[0]Keluar\n\nPilih item yang dijual: ";
+    cout << "========================================\n";
+    cout << "Masukkan angka untuk menjual item, atau 0 untuk kembali: ";
     int choice;
     cin >> choice;
-
     if (choice > 0 && choice <= playerInventorySize) {
         int itemPrice = playerInventory[choice - 1].price > 0 ? playerInventory[choice - 1].price : 0;
-        cout << "kamu menjual " << playerInventory[choice - 1].name 
+        cout << "\n Anda menjual " << playerInventory[choice - 1].name 
              << " seharga " << itemPrice << " gold.\n";
         gold += itemPrice;
-
         for (int i = choice - 1; i < playerInventorySize - 1; ++i) {
             playerInventory[i] = playerInventory[i + 1];
         }
         --playerInventorySize;
-
+    } else if (choice == 0) {
+        cout << "\nKembali ke menu sebelumnya.\n";
+    } else {
+        cout << "\n Pilihan tidak valid. Coba lagi.\n";
     }
-
+    cout << "\n========================================\n";
     guild();
 }
 
+
 void travellingMerchant() {
-    cout << "=== Travelling Merchant ===\n";
+    cout << "\n========================================\n";
+    cout << "          Travelling Merchant         \n";
+    cout << "========================================\n";
     for (int i = 0; i < merchantItemsSize; ++i) {
         cout << i + 1 << ". " << merchantItems[i].name;
-
         if (ownsWeapon(merchantItems[i].name)) {
             cout << " (Sudah dimiliki)";
         } else {
             cout << " (" << merchantItems[i].price << " gold)";
         }
-
         cout << "\n";
     }
-    cout << "[0]Keluar\n\nPilih item yang dibeli: ";
+    cout << "0. Kembali ke menu sebelumnya.\n";
+    cout << "========================================\n";
+    cout << "Masukkan pilihan Anda: ";
     int choice;
     cin >> choice;
 
     if (choice > 0 && choice <= merchantItemsSize) {
         if (ownsWeapon(merchantItems[choice - 1].name)) {
-            cout << "Dirimu Udah Punya senjatanya!.\n";
+            cout << "\n  Anda sudah memiliki " << merchantItems[choice - 1].name << ".\n";
         } else if (gold >= merchantItems[choice - 1].price) {
             gold -= merchantItems[choice - 1].price;
-            cout << "Kamu membeli " << merchantItems[choice - 1].name << ".\n";
-
+            cout << "\n Anda membeli " << merchantItems[choice - 1].name << ".\n";
             if (weaponListSize < MAX_WEAPONS_SIZE) {
                 weaponList[weaponListSize++] = {merchantItems[choice - 1].name, merchantItems[choice - 1].price};
-                saveWeapons();
+                saveWeapons(); 
             } else {
-                cout << "Inventory Penuh!\n";
+                cout << "\n Inventory penuh! Tidak bisa menambahkan senjata baru.\n";
             }
         } else {
-            cout << "Gold tidak cukup!\n";
+            cout << "\n Uang Anda tidak cukup untuk membeli " << merchantItems[choice - 1].name << ".\n";
         }
     }
+    cout << "\n========================================\n";
     camp();
 }
-
 
 
 void selectDungeon() {
     int choice;
     cout << "==================================================\n";
-    cout << "|               Pilih Dungeon                  |\n";
+    cout << "|               Pilih Dungeon                    |\n";
     cout << "==================================================\n";
     cout << "| 1. Skibidi Castle                             |\n";
     cout << "| 2. El Macho Prison                            |\n";
@@ -1233,53 +1372,148 @@ void bonfire() {
     camp();
 }
 
+bool hasInteracted = false; 
 void interactFellowAdventurer() {
-    cout << "=== Interaksi dengan Fellow Adventurer ===\n";
+    if (hasInteracted) {
+        cout << "\n=============================================\n";
+        cout << "||      Anda sudah berbicara sebelumnya.   ||\n";
+        cout << "=============================================\n";
+        camp();
+        return;
+    }
+    hasInteracted = true; 
+    int interactionIndex = randomRange(0, 2); 
+    cout << "\n=============================================\n";
+    cout << "||       Interaksi Fellow Adventurer        ||\n";
+    cout << "=============================================\n";
 
     if (maxDepth == 10) {
-        cout << "Seorang petualang berkata: 'Skibidi Castle benar-benar aneh, aku hampir kehilangan arah di sana!'\n";
-        cout << "Dia menawarkan beberapa tips: 'Jangan lupa periksa setiap sudut, terkadang ada harta karun.'\n";
+        if (interactionIndex == 0) {
+            cout << "| Petualang:                                |\n";
+            cout << "| 'Skibidi Castle itu aneh banget,          |\n";
+            cout << "|   aku hampir nyasar di sana!'             |\n";
+            cout << "|                                           |\n";
+            cout << "| Tips:                                     |\n";
+            cout << "| 'Coba periksa tiap sudut, kadang ada      |\n";
+            cout << "|   harta karun tersembunyi.'               |\n";
+        } else if (interactionIndex == 1) {
+            cout << "| Petualang:                                |\n";
+            cout << "| 'Hati-hati sama suara langkah yang        |\n";
+            cout << "|   nggak jelas di Skibidi Castle.'         |\n";
+            cout << "|                                           |\n";
+            cout << "| Peringatan:                               |\n";
+            cout << "| 'Kadang ada perangkap tersembunyi di      |\n";
+            cout << "|   lorong sempit.'                         |\n";
+        } else {
+            cout << "| Petualang:                                |\n";
+            cout << "| 'Dinding yang retak di Skibidi Castle     |\n";
+            cout << "|   biasanya menyimpan rahasia.'            |\n";
+            cout << "|                                           |\n";
+            cout << "| Rahasia:                                  |\n";
+            cout << "| 'Coba periksa lebih dekat.'               |\n";
+        }
     } else if (maxDepth == 20) {
-        cout << "Seorang petualang berkata: 'El Macho Prison penuh jebakan, berhati-hatilah.'\n";
-        cout << "Dia memperingatkan: 'Musuh di dalam gelap sangat mematikan, bawa cukup senjata!'\n";
+        if (interactionIndex == 0) {
+            cout << "| Petualang:                                |\n";
+            cout << "| 'El Macho Prison itu penuh jebakan,       |\n";
+            cout << "|   aku hampir celaka di sana.'             |\n";
+            cout << "|                                           |\n";
+            cout << "| Tips:                                     |\n";
+            cout << "| 'Perhatikan lantai yang terlihat aneh,    |\n";
+            cout << "|   mungkin itu jebakan.'                   |\n";
+        } else if (interactionIndex == 1) {
+            cout << "| Petualang:                                |\n";
+            cout << "| 'Gelap banget di El Macho Prison, jadi    |\n";
+            cout << "|   siapkan penerangan yang cukup.'         |\n";
+            cout << "|                                           |\n";
+            cout << "| Peringatan:                               |\n";
+            cout << "| 'Musuh sering menyerang dari bayangan,    |\n";
+            cout << "|   jadi tetap waspada.'                    |\n";
+        } else {
+            cout << "| Petualang:                                |\n";
+            cout << "| 'Ada harta karun di lantai terdalam El    |\n";
+            cout << "|   Macho Prison, tapi penjagaannya ketat.' |\n";
+            cout << "|                                           |\n";
+            cout << "| Rahasia:                                  |\n";
+            cout << "| 'Jebakan biasanya ada di sekitar peti.'   |\n";
+        }
     } else if (maxDepth == 30) {
-        cout << "Seorang petualang berkata: 'Sigma Temple Ruin penuh misteri dan teka-teki.'\n";
-        cout << "Dia berbagi: 'Aku pernah melihat harta karun yang dijaga golem, tapi belum cukup kuat untuk mengambilnya.'\n";
+        if (interactionIndex == 0) {
+            cout << "| Petualang:                                |\n";
+            cout << "| 'Sigma Temple Ruin itu penuh teka-teki,   |\n";
+            cout << "|   jangan terburu-buru.'                   |\n";
+            cout << "|                                           |\n";
+            cout << "| Tips:                                     |\n";
+            cout << "| 'Perhatikan lingkungan sekitar untuk      |\n";
+            cout << "|   menemukan petunjuk.'                    |\n";
+        } else if (interactionIndex == 1) {
+            cout << "| Petualang:                                |\n";
+            cout << "| 'Aku pernah lihat golem penjaga di Sigma  |\n";
+            cout << "|   Temple Ruin. Mereka sangat kuat.'       |\n";
+            cout << "|                                           |\n";
+            cout << "| Peringatan:                               |\n";
+            cout << "| 'Jangan melawan tanpa senjata yang kuat.' |\n";
+        } else {
+            cout << "| Petualang:                                |\n";
+            cout << "| 'Ada ruangan rahasia di Sigma Temple      |\n";
+            cout << "|   Ruin penuh artefak kuno.'               |\n";
+            cout << "|                                           |\n";
+            cout << "| Rahasia:                                  |\n";
+            cout << "| 'Menyalakan semua obor bisa membukanya.'  |\n";
+        }
     } else {
-        cout << "Seorang petualang berkata: 'Aku belum pernah sejauh ini, hati-hati ya.'\n";
+        cout << "| Petualang:                                |\n";
+        cout << "| 'Aku belum pernah sejauh ini. Hati-hati.' |\n";
     }
-
+    cout << "=============================================\n";
     camp();
 }
-
-
 void enterDungeon() {
+    hasInteracted = false;
     dungeon();
 }
 
 void checkInventory() {
-    cout << "=== Inventory ===\n";
-    for (int i = 0; i < playerInventorySize; ++i) {
-        cout << i + 1 << ". " << playerInventory[i].name << "\n";
-    }
-
-    cout << "\n=== Weapons ===\n";
-    for (int i = 0; i < weaponListSize; ++i) {
-        cout << i + 1 << ". " << weaponList[i].name << " (Damage: " << weaponList[i].damage << ")";
-        if (weaponList[i].name == chosenWeapon) {
-            cout << " [Dipilih]";
+    cout << "\nCurrency: " << gold << " gold\n";
+    cout << "\n========================================\n";
+    cout << "               INVENTORY              \n";
+    cout << "========================================\n";
+    if (playerInventorySize == 0) {
+        cout << "Inventaris kosong. Tidak ada item yang tersedia.\n";
+    } else {
+        cout << " Daftar Item:\n";
+        for (int i = 0; i < playerInventorySize; ++i) {
+            cout << i + 1 << ". " << playerInventory[i].name << "\n";
         }
-        cout << "\n";
     }
-
-    cout << "\n[0]Keluar\n\nPilih senjata yang ingin di pakai atau 0 untuk kembali: ";
+    cout << "\n========================================\n";
+    cout << "                WEAPONS                  \n";
+    cout << "========================================\n";
+    if (weaponListSize == 0) {
+        cout << "Tidak ada senjata di inventaris.\n";
+    } else {
+        cout << "  Daftar Senjata:\n";
+        for (int i = 0; i < weaponListSize; ++i) {
+            cout << i + 1 << ". " << weaponList[i].name << " (Damage: " << weaponList[i].damage << ")";
+            if (weaponList[i].name == chosenWeapon) {
+                cout << " [Dipilih]";
+            }
+            cout << "\n";
+        }
+    }
+    cout << "\n========================================\n";
+    cout << "Pilih senjata untuk digunakan (0 untuk batal): ";
     int choice;
     cin >> choice;
-
     if (choice > 0 && choice <= weaponListSize) {
         chosenWeapon = weaponList[choice - 1].name;
-        cout << "Kamu memilih: " << chosenWeapon << ".\n";
-        saveWeapons();
+        cout << "\n Anda memilih senjata: " << chosenWeapon << ".\n";
+        saveWeapons(); 
+    } else if (choice == 0) {
+        cout << "\nAnda membatalkan pemilihan senjata.\n";
+    } else {
+        cout << "\n Pilihan tidak valid. Coba lagi.\n";
     }
+    cout << "\n========================================\n";
     camp();
 }
