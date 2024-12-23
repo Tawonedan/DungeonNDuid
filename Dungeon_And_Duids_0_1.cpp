@@ -68,10 +68,10 @@ int gold = 50;
 int weaponCount = 0;
 int currentDepth = 0;
 int maxDepth = 0;
-int playerInventorySize = 3; // Initial inventory size
-int weaponListSize = 0;      // Initial weapon list size
+int playerInventorySize = 3; 
+int weaponListSize = 0;      
 int merchantItemsSize = 3;
-int count = 0; // Variabel global untuk jumlah elemen aktif
+int count = 0;
 int currentWeaponDamage;
 
 bool hasCheckedAround = false;
@@ -93,8 +93,7 @@ InventoryItem merchantItems[MAX_MERCHANT_ITEMS] = { {"Long Sword", 20}, {"Rogue 
 
 Weapon weaponList[MAX_WEAPONS_SIZE];
 
-Player dataList[MAX_SIZE]; // Array untuk menyimpan data
-Player* loadAllPlayers(int& playerCount);
+Player dataList[MAX_SIZE];
 Player currentPlayer;
 
 
@@ -153,7 +152,7 @@ string generateCommonEnemy();
 
 
 
-// Initialize player inventory
+
 void initializePlayerInventory() {
     playerInventory[0] = {"Antique Hourglass", 20};
     playerInventory[1] = {"Old Coin", 15};
@@ -170,15 +169,15 @@ void assignDefaultPricesToInventory() {
 }
 
 void resetWeapons() {
-    weaponListSize = 0; // Reset weapon inventory
-    chosenWeapon = ""; // Reset chosen weapon
-    ofstream file("weapons.txt", ios::out | ios::trunc); // Overwrite file
+    weaponListSize = 0; 
+    chosenWeapon = "";  
+    ofstream file("weapons.txt", ios::out | ios::trunc);
     if (file.is_open()) {
         file.close();
     }
 }
 
-// Load and save weapons to file
+
 void loadWeapons() {
     ifstream file("weapons.txt");
     if (!file.is_open()) return;
@@ -191,7 +190,7 @@ void loadWeapons() {
         getline(ss, name, ',');
         getline(ss, damageStr);
 
-        // Replace underscores with spaces
+
         for (char &c : name) {
             if (c == '_') c = ' ';
         }
@@ -211,7 +210,7 @@ void saveWeapons() {
         for (int i = 0; i < weaponListSize; ++i) {
             string name = weaponList[i].name;
 
-            // Ganti spasi dengan garis bawah untuk menyimpan format yang konsisten
+
             for (char &c : name) {
                 if (c == ' ') c = '_';
             }
@@ -222,15 +221,15 @@ void saveWeapons() {
             file << "ChosenWeapon," << chosenWeapon << "\n";
         }
         file.close();
-        cout << "Senjata berhasil disimpan!\n"; // Debugging log
+        cout << "Senjata berhasil disimpan!\n";
     } else {
-        cout << "Error menyimpan senjata!\n"; // Debugging log
+        cout << "Error menyimpan senjata!\n";  
     }
 
 }
 
 
-// Check if player owns a weapon
+
 bool ownsWeapon(const string &weaponName) {
     for (int i = 0; i < weaponListSize; ++i) {
         if (weaponList[i].name == weaponName) return true;
@@ -238,7 +237,7 @@ bool ownsWeapon(const string &weaponName) {
     return false;
 }
 
-// Utility functions
+
 int randomRange(int min, int max) {
     return min + rand() % (max - min + 1);
 }
@@ -249,8 +248,8 @@ Item getRandomItem() {
 }
 
 void increaseHealth(int healAmount) {
-    int previousHealth = playerHealth; // Simpan nilai sebelum
-    playerHealth = min(playerHealth + healAmount, 100); // Batas maksimum 100
+    int previousHealth = playerHealth; 
+    playerHealth = min(playerHealth + healAmount, 100);
     cout << "Health: " << previousHealth << " -> " << playerHealth << "\n";
 }
 
@@ -310,11 +309,11 @@ void handleChest() {
     cin >> choice;
 
     if (choice == 1) {
-        int outcome = randomRange(0, 3); // 3/4 peluang untuk mendapatkan item
+        int outcome = randomRange(0, 3);
         if (outcome < 3) {
             Item treasure = getRandomItem();
             displayChestResult(true, treasure);
-            addItemToInventory(treasure); // Tambahkan item ke inventaris
+            addItemToInventory(treasure); 
         } else {
             displayChestResult(false, Item{"Mimic", 0});
             
@@ -329,9 +328,9 @@ void handleChest() {
 
 
 void handleSpecialEvent() {
-    int eventRoll = randomRange(1, 100); // Angka acak antara 1-100
+    int eventRoll = randomRange(1, 100); 
 
-    if (eventRoll <= 25) { // Event Kolam
+    if (eventRoll <= 25) { 
         cout << "====================================\n";
         cout << "  Kamu menemukan kolam misteriusl! |\n";
         cout << "====================================\n";
@@ -353,7 +352,7 @@ void handleSpecialEvent() {
         } else {
             cout << "Kamu memutuskan untuk meninggalkan kolam itu dan lanjut.\n";
         }
-    } else if (eventRoll <= 50) { // Event Badut
+    } else if (eventRoll <= 50) {
         cout << "===================================================\n";
         cout << "|           Kamu bertemu seorang badut!           |\n";
         cout << "===================================================\n";
@@ -380,7 +379,7 @@ void handleSpecialEvent() {
         } else {
             cout << "Kamu menolak tawaran badut itu dan pergi.\n";
         }
-    } else if (eventRoll <= 75) { // Event Mayat
+    } else if (eventRoll <= 75) { 
         cout << "====================================\n";
         cout << "|  Kamu menemukan tumpukan mayat.  |\n";
         cout << "====================================\n";
@@ -393,7 +392,7 @@ void handleSpecialEvent() {
         cin >> choice;
 
         if (choice == 1) {
-            int outcome = randomRange(0, 3); // 2/4 chance positive
+            int outcome = randomRange(0, 3);
             if (outcome < 2) {
                 int foundGold = randomRange(10, 30);
                 cout << "You found " << foundGold << " gold!\n";
@@ -407,7 +406,7 @@ void handleSpecialEvent() {
         } else {
             cout << "Kamu meninggalkan tumpukan mayat itu dan pergi.\n";
         }
-    } else { // Event Adventurer
+    } else {
         cout << "=====================================\n";
         cout << "| Kamu bertemu sesama petualang! |\n";
         cout << "=====================================\n";
@@ -450,14 +449,14 @@ void navigateDepth(int depth) {
     hasCheckedAround = false;
     cout << "Kedalaman: " << currentDepth << "\n";
 
-    // Cek apakah lantai adalah checkpoint (kelipatan 4)
+
     if (currentDepth % 4 == 0) {
         cout << "Kamu menemukan checkpoint! Kamu bisa istirahat disini.\n";
         dungeon();
         return;
     }
 
-    // Event probabilitas: 60% musuh, 20% peti, 20% spesial
+
     int event = randomRange(0, 9);
     if (event < 6) {
         cout << "Kamu bertemu musuh!\n";
@@ -487,7 +486,7 @@ void checkAround() {
     }
 
     hasCheckedAround = true;
-    int event = randomRange(0, 9); // 80% no result, 20% find chest
+    int event = randomRange(0, 9);
     if (event < 8) {
         cout << "Kamu tetap tidak menemukan apapun.\n";
     } else {
@@ -511,41 +510,38 @@ void displayInventory() {
     }
 }
 int convertInventory(const string& input, string items[], int max_size) {
-    // Ubah string menjadi array karakter untuk strtok
+
     char cstr[input.size() + 1];
     strcpy(cstr, input.c_str());
     
-    // Pisahkan string berdasarkan delimiter ","
     char* token = strtok(cstr, ",");
     int index = 0;
 
     while (token != nullptr && index < max_size) {
-        // Hilangkan spasi di awal jika ada
         while (*token == ' ') token++;
 
-        items[index] = token; // Masukkan token ke array
+        items[index] = token;
         index++;
         
-        token = strtok(nullptr, ","); // Ambil token berikutnya
+        token = strtok(nullptr, ",");
     }
 
-    return index; // Kembalikan jumlah elemen yang diisi
+    return index;
 
 }
 
-// Fungsi untuk menghapus elemen dari array
+
 int removeItemFromArray(string items[], int count, int indexToRemove) {
     if (indexToRemove < 0 || indexToRemove >= count) {
         cout << "Invalid index!" << endl;
-        return count; // Tidak ada yang dihapus
+        return count; 
     }
 
-    // Geser elemen ke kiri untuk menimpa elemen yang dihapus
     for (int i = indexToRemove; i < count - 1; i++) {
         items[i] = items[i + 1];
     }
 
-    return count - 1; // Kurangi jumlah item aktif
+    return count - 1; 
 }
 
 ////////////////////////////////// Inventory Function /////////////////////////////////// 
@@ -558,7 +554,7 @@ Enemy loadEnemyData(string enemyName) {
     ifstream inFile("enemyData.txt");
     if (!inFile) {
         cerr << "Error: Could not open enemyAsset.txt!" << endl;
-        return Enemy{"", 0, 0}; // Mengembalikan enemy default jika file tidak ditemukan
+        return Enemy{"", 0, 0};
     }
 
     string line;
@@ -569,17 +565,17 @@ Enemy loadEnemyData(string enemyName) {
         stringstream ss(line);
         string key, value;
 
-        getline(ss, key, ':');   // Baca key sebelum ':'
-        getline(ss, value);     // Baca value setelah ':'
+        getline(ss, key, ':'); 
+        getline(ss, value);    
 
         if (!value.empty() && value[0] == ' ') {
-            value = value.substr(1); // Hilangkan spasi awal jika ada
+            value = value.substr(1);
         }
 
         if (key == "EnemyName") {
             if (value == enemyName) {
                 foundEnemy = true;
-                currentEnemy = Enemy(); // Reset data enemy
+                currentEnemy = Enemy();
                 currentEnemy.name = value;
             }
         } else if (key == "Health" && foundEnemy) {
@@ -588,7 +584,6 @@ Enemy loadEnemyData(string enemyName) {
             currentEnemy.strength = stoi(value);
         }
 
-        // Jika sudah membaca semua data musuh yang diperlukan, keluar dari loop
         if (foundEnemy && key == "Strength") {
             break;
         }
@@ -598,7 +593,7 @@ Enemy loadEnemyData(string enemyName) {
 
     if (!foundEnemy) {
         cerr << "Error: Enemy '" << enemyName << "' not found in enemyAsset.txt!" << endl;
-        return Enemy{"", 0, 0}; // Mengembalikan enemy default jika tidak ditemukan
+        return Enemy{"", 0, 0}; 
     }
 
     return currentEnemy;
@@ -631,10 +626,10 @@ void damageStr(const string& weaponName, int& enemyHealth) {
         if (weaponList[i].name == weaponName) {
             int damage = weaponList[i].damage;
 
-            // Kurangi kesehatan musuh
+
             currentEnemy.health -= damage;
 
-            // Tampilkan hasil serangan
+
             cout << "Kamu menyerang musuh dengan " << weaponName 
                  << " dan memberikan " << damage << " damage!\n";
             cout << "Darah musuh saat ini: " << max(enemyHealth, 0) << "\n";
@@ -643,7 +638,7 @@ void damageStr(const string& weaponName, int& enemyHealth) {
         }
     }
 
-    // Jika senjata tidak ditemukan
+
     cout << "Kamu tidak memegang senjata! Kamu tidak memberikan damage.\n";
 }
 
@@ -707,8 +702,8 @@ void playerDefend() {
 string useItems() {
     string usedItem;
 
-    if (!itemInitialize) { // Inisialisasi inventori hanya sekali
-        string input = inventoryLine; // String input
+    if (!itemInitialize) {
+        string input = inventoryLine;
         count = convertInventory(input, items, MAX_INVENTORY_SIZE);
         itemInitialize = true;
     }
@@ -717,7 +712,7 @@ string useItems() {
         displayInventory();
 
         if (count == 0) {
-            break; // Keluar dari loop jika inventori kosong
+            break;
         }
 
         int itemChoice;
@@ -730,7 +725,7 @@ string useItems() {
         }
 
         if (itemChoice == 0) {
-            break; // Keluar dari program jika pengguna memasukkan 0
+            break;
         }
 
         if (itemChoice > 0 && itemChoice <= count) {
@@ -849,7 +844,7 @@ void battle(const string& playerName, const string& enemyName) {
             battleOngoing = false;
             displayGameOver();
 
-            // Reset status untuk permainan baru
+
             currentEnemy = Enemy{"", 0, 0};
             playerHealth = 100;
             titleScreen();
@@ -866,33 +861,33 @@ void dungeon() {
     cin >> choice;
 
     switch (choice) {
-        case 1: // Go deeper
+        case 1: 
             navigateDepth(currentDepth + 1);
             break;
         case 2:
             checkAround();
             break;
-        case 3: // Return to previous depth
+        case 3: 
             navigateDepth(currentDepth - 1);
             break;
-        case 4: // Rest 
+        case 4:  
             if (currentDepth % 4 == 0 && currentDepth != 0) {
                 cout << "Kamu beristirahat dan memulihkan tenagamu.\n";
-                increaseHealth(50); // Pulihkan 50 HP
+                increaseHealth(50);
             } else {
                 cout << "Pilihan Invalid. Kembali ke menu dungeon.\n";
             }
-            dungeon(); // Kembali ke menu dungeon
+            dungeon();
             break;
-        default: // Input tidak valid
+        default:
             cout << "Pilihan Invalid. Coba Lagi.\n";
             navigateDepth(currentDepth);
     }
 }
 
-// Main function
+
 int main() {
-    srand(time(0)); // Initialize random seed
+    srand(time(0));
     initializePlayerInventory();
     assignDefaultPricesToInventory();
     titleScreen();
@@ -961,12 +956,12 @@ void loadGame() {
             }
         }
         loadFile.close();
-        loadWeapons(); // Load weapons including chosen weapon
+        loadWeapons();
         cout << "Game sukses di load!\n";
-        idleGuild(); // Lanjutkan ke guild setelah memuat game
+        idleGuild();
     } else {
         cout << "Ga ada game yang di simpan. Memulai petualangan baru.\n";
-        newGame(); // Mulai permainan baru jika file save tidak ditemukan
+        newGame();
     }
 }
 
@@ -981,7 +976,7 @@ void newGame() {
 
 void exitGame() {
     cout << "Balik lagi ya. Dada >////<!\n";
-    exit(0); // Menutup program sepenuhnya
+    exit(0);
 }
 
 void prologue() {
@@ -1044,7 +1039,7 @@ void guild() {
 }
 
 void saveGame() {
-    ofstream saveFile("savegame.txt", ios::out | ios::trunc); // Gunakan mode trunc
+    ofstream saveFile("savegame.txt", ios::out | ios::trunc);
     if (saveFile.is_open()) {
         saveFile << "PlayerName: " << playerName << "\n";
         saveFile << "Health: " << playerHealth << "\n";
@@ -1056,9 +1051,9 @@ void saveGame() {
         saveFile << "\n";
         saveFile << "Currency: " << gold << "\n";
         saveFile.close();
-        cout << "Game berhasil di save!\n"; // Debugging log
+        cout << "Game berhasil di save!\n"; 
     } else {
-        cout << "Error saving the game!\n"; // Debugging log
+        cout << "Error saving the game!\n"; 
     }
 }
 
@@ -1090,7 +1085,6 @@ void sellItems() {
              << " seharga " << itemPrice << " gold.\n";
         gold += itemPrice;
 
-        // Remove item by shifting array
         for (int i = choice - 1; i < playerInventorySize - 1; ++i) {
             playerInventory[i] = playerInventory[i + 1];
         }
@@ -1125,10 +1119,9 @@ void travellingMerchant() {
             gold -= merchantItems[choice - 1].price;
             cout << "Kamu membeli " << merchantItems[choice - 1].name << ".\n";
 
-            // Tambahkan ke weaponList
             if (weaponListSize < MAX_WEAPONS_SIZE) {
                 weaponList[weaponListSize++] = {merchantItems[choice - 1].name, merchantItems[choice - 1].price};
-                saveWeapons(); // Simpan senjata ke file
+                saveWeapons();
             } else {
                 cout << "Inventory Penuh!\n";
             }
@@ -1274,7 +1267,6 @@ void checkInventory() {
     for (int i = 0; i < weaponListSize; ++i) {
         cout << i + 1 << ". " << weaponList[i].name << " (Damage: " << weaponList[i].damage << ")";
         if (weaponList[i].name == chosenWeapon) {
-            // currentWeaponDamage = weaponListSize[i].damage;
             cout << " [Dipilih]";
         }
         cout << "\n";
@@ -1287,7 +1279,7 @@ void checkInventory() {
     if (choice > 0 && choice <= weaponListSize) {
         chosenWeapon = weaponList[choice - 1].name;
         cout << "Kamu memilih: " << chosenWeapon << ".\n";
-        saveWeapons(); // Simpan senjata yang dipilih
+        saveWeapons();
     }
     camp();
 }
